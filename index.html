@@ -1,0 +1,866 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>OpenData Dicts | Central Repository Dashboard</title>
+    
+    <!-- Tailwind CSS with Forms and Container Queries -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    
+    <!-- Google Fonts: Playfair Display, Roboto, Montserrat -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;700&family=Roboto:wght@400;500;700&family=Montserrat:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <!-- Material Symbols Outlined -->
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+    
+    <!-- Tailwind Custom Configuration -->
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "surface-container-high": "#eae7e7",
+                        "on-surface": "#1b1b1c",
+                        "surface-container-lowest": "#ffffff",
+                        "on-tertiary": "#ffffff",
+                        "surface-container": "#f0eded",
+                        "tertiary-fixed-dim": "#ffb1c3",
+                        "tertiary-container": "#e2216f",
+                        "surface-container-highest": "#e5e2e1",
+                        "on-primary-container": "#fffbff",
+                        "surface-container-low": "#f6f3f2",
+                        error: "#ba1a1a",
+                        "on-background": "#1b1b1c",
+                        "on-tertiary-fixed-variant": "#8f0041",
+                        "primary-fixed-dim": "#ffb1c2",
+                        "on-primary": "#ffffff",
+                        "primary-container": "#d2386d",
+                        background: "#fcf9f8",
+                        "inverse-surface": "#303030",
+                        "secondary-fixed-dim": "#c6c6c7",
+                        "on-secondary": "#ffffff",
+                        "on-error": "#ffffff",
+                        "surface-dim": "#dcd9d9",
+                        "primary-fixed": "#ffd9e0",
+                        "on-surface-variant": "#584045",
+                        "inverse-primary": "#ffb1c2",
+                        "on-secondary-fixed": "#1a1c1c",
+                        "error-container": "#ffdad6",
+                        "surface-bright": "#fcf9f8",
+                        "secondary-fixed": "#e2e2e2",
+                        secondary: "#5d5f5f",
+                        "on-error-container": "#93000a",
+                        "surface-variant": "#e5e2e1",
+                        "on-secondary-fixed-variant": "#454747",
+                        outline: "#8c7075",
+                        "secondary-container": "#dfe0e0",
+                        "on-tertiary-fixed": "#3f0019",
+                        "on-secondary-container": "#616363",
+                        "surface-tint": "#b31e58",
+                        primary: "#b01b55",
+                        "on-tertiary-container": "#140004",
+                        "outline-variant": "#dfbec4",
+                        surface: "#fcf9f8",
+                        "inverse-on-surface": "#f3f0ef",
+                        "on-primary-fixed": "#3f0019",
+                        "tertiary-fixed": "#ffd9e0",
+                        tertiary: "#bb0057",
+                        "on-primary-fixed-variant": "#8f0041"
+                    },
+                    borderRadius: {
+                        DEFAULT: "0.25rem",
+                        lg: "0.5rem",
+                        xl: "0.75rem",
+                        full: "9999px"
+                    },
+                    spacing: {
+                        lg: "1.5rem",
+                        base: "4px",
+                        md: "1rem",
+                        sm: "0.5rem",
+                        "container-max": "1280px",
+                        xs: "0.25rem",
+                        xl: "2.5rem",
+                        gutter: "1rem"
+                    }
+                }
+            }
+        };
+    </script>
+    
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+        .font-display {
+            font-family: 'Playfair Display', serif;
+        }
+        .font-body {
+            font-family: 'Roboto', sans-serif;
+        }
+        .font-label {
+            font-family: 'Montserrat', sans-serif;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            display: inline-block;
+            vertical-align: middle;
+            line-height: 1;
+        }
+        
+        /* Smooth transitions */
+        .page-transition {
+            transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out;
+        }
+        .animate-fade-in {
+            animation: fadeIn 0.3s ease-out forwards;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(4px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+    
+    <!-- Load Dataset Registry configuration -->
+    <script src="datasets.js"></script>
+</head>
+<body class="bg-background text-on-background dark:bg-[#121212] dark:text-[#f3f0ef] min-h-screen flex flex-col page-transition">
+
+    <!-- Top Navigation Bar -->
+    <header class="bg-surface-container-lowest dark:bg-[#1c1c1e] border-b border-outline-variant dark:border-[#2d2d30] sticky top-0 z-50 transition-colors">
+        <div class="flex justify-between items-center w-full px-lg py-sm max-w-container-max mx-auto">
+            <div class="flex items-center gap-xl">
+                <a href="#/" class="flex items-center gap-sm font-display text-title-lg font-bold text-on-surface dark:text-[#f3f0ef] hover:opacity-90">
+                    <span class="material-symbols-outlined text-primary dark:text-[#ffb1c2] text-[28px]">database</span>
+                    <span>India Data Schema</span>
+                </a>
+                
+                <!-- Global Search Bar in Header -->
+                <div class="hidden md:flex items-center bg-surface-container dark:bg-[#2c2c2e] rounded-lg px-md py-xs border border-outline-variant dark:border-transparent focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20 focus-within:bg-surface-container-lowest dark:focus-within:bg-[#1c1c1e] transition-all w-80">
+                    <span class="material-symbols-outlined text-on-surface-variant dark:text-gray-400 mr-sm">search</span>
+                    <input id="header-search" class="bg-transparent border-none focus:ring-0 text-body-md w-full p-0 text-on-surface dark:text-[#f3f0ef]" placeholder="Search schemas..." type="text">
+                </div>
+            </div>
+            
+            <nav class="hidden md:flex items-center gap-lg font-label text-label-md">
+                <a class="text-primary dark:text-[#ffb1c2] border-b-2 border-primary dark:border-[#ffb1c2] pb-1 cursor-pointer" href="#/">Explore</a>
+            </nav>
+            
+            <div class="flex items-center gap-md">
+                <button id="theme-toggle-btn" onclick="toggleTheme()" class="material-symbols-outlined p-2 rounded-full hover:bg-surface-container dark:hover:bg-[#2c2c2e] text-on-surface-variant dark:text-[#f3f0ef] transition-colors" title="Toggle Theme">
+                    dark_mode
+                </button>
+                <a href="https://github.com" target="_blank" class="bg-primary text-on-primary dark:bg-[#ffb1c2] dark:text-[#3f0019] px-md py-xs font-label text-label-md rounded-lg hover:opacity-90 transition-opacity">
+                    GitHub
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow">
+        <!-- Home / Explore View -->
+        <div id="home-view" class="hidden">
+            <!-- Hero Section -->
+            <section class="bg-surface-container-low dark:bg-[#18181a] py-xl px-lg border-b border-outline-variant dark:border-[#2d2d30] transition-colors">
+                <div class="max-w-container-max mx-auto text-center">
+                    <h1 class="font-display text-[40px] md:text-[48px] leading-tight text-on-surface dark:text-[#f3f0ef] mb-md font-bold">
+                        The Open-Source <br class="hidden md:block"> Data Dictionary
+                    </h1>
+                    <p class="font-body text-body-lg text-on-surface-variant dark:text-gray-300 max-w-2xl mx-auto mb-xl">
+                        Standardize your data pipelines with verified schemas for corporate, geographic, and sectoral datasets. Access metadata, types, and constraints in one unified index.
+                    </p>
+                    
+                    <!-- Hero Search -->
+                    <div class="max-w-xl mx-auto bg-surface-container-lowest dark:bg-[#1c1c1e] border border-outline-variant dark:border-[#2d2d30] rounded-xl p-1.5 flex items-center gap-xs shadow-sm focus-within:ring-2 focus-within:ring-primary/20">
+                        <span class="material-symbols-outlined text-on-surface-variant dark:text-gray-400 ml-md">database</span>
+                        <input id="hero-search" class="flex-grow bg-transparent border-none focus:ring-0 font-body text-body-md py-md px-sm text-on-surface dark:text-[#f3f0ef]" placeholder="Search LGD codes, airlines, corporate registries..." type="text">
+                        <button onclick="triggerSearch()" class="bg-primary text-on-primary dark:bg-[#ffb1c2] dark:text-[#3f0019] px-xl py-md rounded-lg font-label text-label-md hover:opacity-90 transition-opacity whitespace-nowrap">
+                            Find Schema
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Main Catalog Section -->
+            <section class="max-w-container-max mx-auto px-lg py-xl">
+                <!-- Filters and Sorting Toolbar -->
+                <div class="flex flex-col md:flex-row md:justify-between md:items-center gap-md mb-xl">
+                    <!-- Category Filters -->
+                    <div class="flex flex-wrap items-center gap-sm" id="category-filters">
+                        <!-- Loaded dynamically -->
+                    </div>
+                    
+                    <!-- Sorting Option -->
+                    <div class="flex items-center gap-sm self-end">
+                        <span class="text-label-sm font-label text-on-surface-variant dark:text-gray-400">Sort by:</span>
+                        <select id="sort-select" onchange="filterAndRenderDatasets()" class="bg-surface-container-low dark:bg-[#1c1c1e] border-outline-variant dark:border-[#2d2d30] text-on-surface dark:text-[#f3f0ef] rounded px-md py-xs text-label-sm font-label focus:ring-primary focus:border-primary">
+                            <option value="popular">Most Popular</option>
+                            <option value="alphabetical">Name (A-Z)</option>
+                            <option value="rows">Row Count</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Dataset Catalog Grid -->
+                <div id="dataset-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-lg">
+                    <!-- Cards dynamically rendered here -->
+                </div>
+                
+                <div id="no-results" class="hidden text-center py-20">
+                    <span class="material-symbols-outlined text-[64px] text-outline dark:text-gray-600 mb-md">search_off</span>
+                    <h3 class="font-display text-title-lg text-on-surface dark:text-[#f3f0ef] mb-sm">No datasets found</h3>
+                    <p class="text-body-md text-on-surface-variant dark:text-gray-400">Try matching keywords, tags, or clear your query.</p>
+                    <button onclick="clearAllFilters()" class="mt-md bg-surface-container dark:bg-[#2c2c2e] hover:bg-surface-container-high text-primary dark:text-[#ffb1c2] px-md py-xs rounded font-label text-label-sm border border-outline-variant dark:border-[#2d2d30]">
+                        Clear Filters
+                    </button>
+                </div>
+
+                <div class="mt-xl text-center">
+                    <button class="bg-surface-container-high dark:bg-[#2c2c2e] text-on-surface dark:text-[#f3f0ef] px-xl py-md rounded font-label text-label-md hover:bg-surface-dim dark:hover:bg-[#3c3c3e] transition-colors border border-outline-variant dark:border-[#2d2d30]">
+                        View All 512 Datasets
+                    </button>
+                </div>
+            </section>
+        </div>
+
+        <!-- Detailed Dataset view -->
+        <div id="detail-view" class="hidden max-w-container-max mx-auto px-lg py-md">
+            <!-- Breadcrumbs -->
+            <nav class="flex items-center gap-xs text-on-surface-variant dark:text-gray-400 mb-lg font-label text-label-sm">
+                <a class="hover:text-primary dark:hover:text-[#ffb1c2] transition-colors" href="#/">Home</a>
+                <span class="material-symbols-outlined text-[14px]">chevron_right</span>
+                <span id="detail-breadcrumb-category" class="hover:text-primary dark:hover:text-[#ffb1c2] transition-colors">Geographic</span>
+                <span class="material-symbols-outlined text-[14px]">chevron_right</span>
+                <span id="detail-breadcrumb-name" class="text-on-surface dark:text-[#f3f0ef] font-medium">Districts of India</span>
+            </nav>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-xl">
+                <!-- Sidebar (Downloads & Metadata) -->
+                <aside class="lg:col-span-3 space-y-lg">
+                    <!-- Download Center -->
+                    <div class="bg-surface-container-lowest dark:bg-[#1c1c1e] border border-outline-variant dark:border-[#2d2d30] p-md rounded-lg shadow-sm transition-colors">
+                        <h3 class="font-display text-title-lg mb-md text-on-surface dark:text-[#f3f0ef] font-bold">Download Center</h3>
+                        <div class="grid grid-cols-1 gap-sm" id="download-center-buttons">
+                            <!-- Populated dynamically -->
+                        </div>
+                    </div>
+
+                    <!-- Related Datasets -->
+                    <div class="bg-surface-container-lowest dark:bg-[#1c1c1e] border border-outline-variant dark:border-[#2d2d30] p-md rounded-lg shadow-sm transition-colors">
+                        <h3 class="font-display text-title-lg mb-md text-on-surface dark:text-[#f3f0ef] font-bold">Related Datasets</h3>
+                        <div class="space-y-sm" id="related-datasets-list">
+                            <!-- Populated dynamically -->
+                        </div>
+                    </div>
+                </aside>
+
+                <!-- Main Content Area -->
+                <section class="lg:col-span-9 space-y-xl">
+                    <!-- Hero Info -->
+                    <div class="space-y-sm">
+                        <h1 id="detail-title" class="font-display text-[32px] md:text-[40px] text-on-surface dark:text-[#f3f0ef] leading-tight font-bold">Districts of India</h1>
+                        <p id="detail-description" class="font-body text-body-lg text-on-surface-variant dark:text-gray-300 max-w-3xl">
+                            A comprehensive directory of all administrative districts in India, indexed with the official Local Government Directory (LGD) codes provided by the Ministry of Panchayati Raj.
+                        </p>
+                    </div>
+
+                    <!-- Interactive Schema Table -->
+                    <div class="bg-surface-container-lowest dark:bg-[#1c1c1e] border border-outline-variant dark:border-[#2d2d30] rounded-lg overflow-hidden shadow-sm transition-colors">
+                        <div class="p-md border-b border-outline-variant dark:border-[#2d2d30] flex justify-between items-center bg-surface-container-low dark:bg-[#18181a] transition-colors">
+                            <h2 class="font-display text-title-lg font-bold text-on-surface dark:text-[#f3f0ef]">Schema Definition</h2>
+                            <span id="detail-schema-count" class="font-label text-label-sm text-on-surface-variant dark:text-gray-400">4 Fields Defined</span>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left border-collapse font-body">
+                                <thead>
+                                    <tr class="bg-surface-container-lowest dark:bg-[#1c1c1e] border-b border-outline-variant dark:border-[#2d2d30] text-on-surface-variant dark:text-gray-400 font-label text-label-sm uppercase tracking-wider">
+                                        <th class="px-md py-sm font-medium">Field Name</th>
+                                        <th class="px-md py-sm font-medium">Type</th>
+                                        <th class="px-md py-sm font-medium">Description</th>
+                                        <th class="px-md py-sm font-medium">Sample Value</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="detail-schema-tbody" class="divide-y divide-outline-variant dark:divide-[#2d2d30] text-body-md text-on-surface dark:text-[#f3f0ef]">
+                                    <!-- Rendered dynamically -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Tabbed Explorer -->
+                    <div class="bg-surface-container-lowest dark:bg-[#1c1c1e] border border-outline-variant dark:border-[#2d2d30] rounded-lg overflow-hidden shadow-sm transition-colors">
+                        <!-- Tabs Headers -->
+                        <div class="flex border-b border-outline-variant dark:border-[#2d2d30] bg-surface-container-low dark:bg-[#18181a]">
+                            <button id="tab-btn-preview" onclick="switchDetailTab('preview')" class="px-lg py-md font-label text-label-md border-b-2 border-primary text-primary dark:border-[#ffb1c2] dark:text-[#ffb1c2] font-semibold transition-all">
+                                Data Preview
+                            </button>
+                            <button id="tab-btn-impl" onclick="switchDetailTab('impl')" class="px-lg py-md font-label text-label-md border-b-2 border-transparent text-on-surface-variant dark:text-gray-400 hover:text-on-surface dark:hover:text-[#f3f0ef] font-semibold transition-all">
+                                Implementation
+                            </button>
+                        </div>
+                        
+                        <!-- Tab Content: Data Preview -->
+                        <div id="detail-content-preview" class="p-md space-y-md">
+                            <div class="flex flex-col sm:flex-row gap-md justify-between sm:items-center">
+                                <h3 class="font-display text-title-lg text-on-surface dark:text-[#f3f0ef] font-semibold">Sample Records</h3>
+                                <!-- Local Preview Table Search -->
+                                <div class="flex items-center bg-surface-container dark:bg-[#2c2c2e] rounded-lg px-md py-xs border border-outline-variant dark:border-[#2d2d30] focus-within:border-primary transition-all w-full sm:w-64">
+                                    <span class="material-symbols-outlined text-on-surface-variant dark:text-gray-400 mr-sm">search</span>
+                                    <input id="preview-search" oninput="filterPreviewTable()" class="bg-transparent border-none focus:ring-0 text-body-md w-full p-0 text-on-surface dark:text-[#f3f0ef]" placeholder="Filter preview rows..." type="text">
+                                </div>
+                            </div>
+                            
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-left border-collapse text-body-md font-body">
+                                    <thead>
+                                        <tr class="bg-surface-container-low dark:bg-[#2c2c2e] text-on-surface-variant dark:text-gray-300 font-label text-label-sm border-b border-outline-variant dark:border-[#2d2d30]" id="detail-preview-thead">
+                                            <!-- Headers loaded dynamically -->
+                                        </tr>
+                                    </thead>
+                                    <tbody id="detail-preview-tbody" class="divide-y divide-outline-variant dark:divide-[#2d2d30] text-on-surface dark:text-[#f3f0ef]">
+                                        <!-- Rows loaded dynamically -->
+                                    </tbody>
+                                </table>
+                            </div>
+                            
+                            <div class="flex flex-col items-center justify-center pt-md" id="preview-actions">
+                                <button onclick="simulateLoadMore()" class="text-primary dark:text-[#ffb1c2] font-label text-label-md hover:underline flex items-center gap-xs">
+                                    <span class="material-symbols-outlined text-[18px]">sync</span>
+                                    <span>Stream more records...</span>
+                                </button>
+                                <div id="toast-message" class="hidden mt-2 text-label-sm text-primary dark:text-[#ffb1c2] animate-pulse">
+                                    Connected to endpoint. Fetching chunk from Parquet storage stream...
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Tab Content: Implementation -->
+                        <div id="detail-content-impl" class="hidden p-md space-y-lg bg-surface-container-low dark:bg-[#18181a]">
+                            <div>
+                                <span class="font-label text-label-sm text-outline dark:text-gray-400 block mb-sm uppercase tracking-wider font-semibold">Python (Pandas SDK)</span>
+                                <pre class="bg-[#1e1e1e] border border-[#2d2d30] p-md rounded-lg font-mono text-label-sm overflow-x-auto text-[#9cdcfe]"><code id="code-python"># Load block</code></pre>
+                            </div>
+                            <div>
+                                <span class="font-label text-label-sm text-outline dark:text-gray-400 block mb-sm uppercase tracking-wider font-semibold">cURL (REST API Endpoint)</span>
+                                <pre class="bg-[#1e1e1e] border border-[#2d2d30] p-md rounded-lg font-mono text-label-sm overflow-x-auto text-[#ce9178]"><code id="code-curl"># curl block</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+
+        <!-- Admin Guide view -->
+        <div id="docs-view" class="hidden max-w-container-max mx-auto px-lg py-xl">
+            <div class="max-w-4xl mx-auto space-y-lg">
+                <nav class="flex items-center gap-xs text-on-surface-variant dark:text-gray-400 mb-lg font-label text-label-sm">
+                    <a class="hover:text-primary dark:hover:text-[#ffb1c2] transition-colors" href="#/">Home</a>
+                    <span class="material-symbols-outlined text-[14px]">chevron_right</span>
+                    <span class="text-on-surface dark:text-[#f3f0ef] font-medium">Administrator Guide</span>
+                </nav>
+                
+                <h1 class="font-display text-[36px] md:text-[44px] text-on-surface dark:text-[#f3f0ef] font-bold border-b border-outline-variant dark:border-[#2d2d30] pb-4">
+                    Administrator Dataset Guide
+                </h1>
+                
+                <div class="prose dark:prose-invert max-w-none text-on-surface dark:text-gray-300 font-body space-y-md leading-relaxed">
+                    <p class="text-body-lg">
+                        Welcome to the OpenData Dicts Admin Portal guide. The portal is completely static, optimized to run straight out of a <strong>GitHub Pages (github.io)</strong> environment. Adding new datasets, schema tables, CSV files, and PDF data dictionaries requires no database reconfiguration. Simply update the configuration file in your git commits.
+                    </p>
+
+                    <div class="bg-primary/5 dark:bg-[#ffb1c2]/5 border-l-4 border-primary dark:border-[#ffb1c2] p-md rounded-r-lg my-lg">
+                        <h3 class="font-display text-title-lg font-bold text-primary dark:text-[#ffb1c2] mb-xs">Dynamic Architecture</h3>
+                        <p class="text-body-md text-on-surface-variant dark:text-gray-300">
+                            The UI compiles data in real-time from <code class="bg-surface-container dark:bg-[#2c2c2e] px-1.5 py-0.5 rounded font-mono text-label-sm">datasets.js</code>. Pushing file updates to GitHub will reflect the modifications instantaneously in production.
+                        </p>
+                    </div>
+
+                    <h2 class="font-display text-headline-sm text-on-surface dark:text-[#f3f0ef] font-semibold mt-xl">Step 1: Hosting Data Files (CSV & PDF)</h2>
+                    <p>
+                        To add download attachments (CSV, PDF, JSON), host the raw documents on your GitHub repository.
+                    </p>
+                    <ol class="list-decimal pl-lg space-y-sm">
+                        <li>Commit the dataset files (e.g. <code class="bg-surface-container dark:bg-[#2c2c2e] px-1 py-0.5 rounded font-mono">districts.csv</code>, <code class="bg-surface-container dark:bg-[#2c2c2e] px-1 py-0.5 rounded font-mono">districts.pdf</code>) to your repository.</li>
+                        <li>Push files to your remote repository branch (e.g. <code class="bg-surface-container dark:bg-[#2c2c2e] px-1 py-0.5 rounded font-mono">main</code>).</li>
+                        <li>Retrieve the raw GitHub URL for each file:
+                            <br>
+                            <span class="text-on-surface-variant dark:text-gray-400 font-mono text-xs block bg-surface-container dark:bg-[#2c2c2e] p-sm rounded mt-1">
+                                https://raw.githubusercontent.com/[Username]/[Repository-Name]/[Branch]/[Path-To-File]
+                            </span>
+                        </li>
+                    </ol>
+
+                    <h2 class="font-display text-headline-sm text-on-surface dark:text-[#f3f0ef] font-semibold mt-xl">Step 2: Registering Datasets in datasets.js</h2>
+                    <p>
+                        Open <code class="bg-surface-container dark:bg-[#2c2c2e] px-1.5 py-0.5 rounded font-mono text-label-sm">datasets.js</code> at the codebase root and insert a new object block into the <code class="bg-surface-container dark:bg-[#2c2c2e] px-1.5 py-0.5 rounded font-mono text-label-sm">DATASETS</code> array. Here is a fully styled configuration snippet:
+                    </p>
+
+                    <pre class="bg-[#1e1e1e] text-[#9cdcfe] p-md rounded-lg font-mono text-xs overflow-x-auto border border-[#2d2d30]"><code>{
+  id: "electoral-bonds-data",
+  name: "Electoral Bonds Registry",
+  category: "Government",
+  icon: "payments",
+  description: "Official records of electoral bonds purchase, listing donor names, bond values, and purchasing dates.",
+  rows: "16k rows",
+  updated: "7 days ago",
+  tags: ["Electoral", "Finance", "Government"],
+  download: {
+    csv: "https://raw.githubusercontent.com/saisantoshv3/electoral_bonds/main/electoral_bonds.csv",
+    pdf: "https://raw.githubusercontent.com/saisantoshv3/electoral_bonds/main/electoral_bonds.pdf",
+    json: "https://raw.githubusercontent.com/saisantoshv3/electoral_bonds/main/electoral_bonds.json"
+  },
+  related: [
+    { name: "MCA Companies Registry", id: "mca-companies-registry" }
+  ],
+  schema: [
+    { name: "Bond Number", type: "STRING", primary: true, desc: "Alphanumeric tracking code.", sample: '"TL85110"' },
+    { name: "Purchaser Name", type: "STRING", primary: false, desc: "Corporate body or citizen buyer.", sample: '"Reliance Industries"' },
+    { name: "Denomination", type: "INTEGER", primary: false, desc: "Bond value in INR.", sample: "10000000" }
+  ],
+  previewHeaders: ["Bond Number", "Purchaser Name", "Denomination"],
+  preview: [
+    { "Bond Number": "TL85110", "Purchaser Name": "Reliance Industries", "Denomination": 10000000 },
+    { "Bond Number": "TL85111", "Purchaser Name": "MEIL Ltd", "Denomination": 5000000 }
+  ],
+  pythonCode: `# Python snippet`,
+  curlCode: `# curl command`
+}</code></pre>
+
+                    <h2 class="font-display text-headline-sm text-on-surface dark:text-[#f3f0ef] font-semibold mt-xl">Step 3: Verification & Live Sync</h2>
+                    <p>
+                        Commit your modifications and push the files:
+                    </p>
+                    <pre class="bg-[#1e1e1e] text-[#ce9178] p-md rounded-lg font-mono text-xs overflow-x-auto border border-[#2d2d30]"><code>git add datasets.js ADMIN_GUIDE.md index.html
+git commit -m "Update schema registry and documentation"
+git push origin main</code></pre>
+                    <p>
+                        Your site hosted on GitHub Pages will automatically compile the modifications and build. Within minutes, the new schema registry is interactive on your homepage!
+                    </p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Global Footer -->
+    <footer class="bg-surface-container-low dark:bg-[#18181a] border-t border-outline-variant dark:border-[#2d2d30] full-width py-md transition-colors mt-auto">
+        <div class="flex flex-col md:flex-row justify-between items-center w-full px-lg max-w-container-max mx-auto gap-md flex-wrap">
+            <div class="flex flex-col md:flex-row items-center gap-md flex-wrap">
+                <a href="#/" class="font-display text-title-lg font-bold text-on-surface dark:text-[#f3f0ef]">
+                    OpenData Dicts
+                </a>
+                <span class="font-label text-label-sm text-on-surface-variant dark:text-gray-400">
+                    &copy; 2026 OpenData Dicts. Released under MIT License.
+                </span>
+                
+                <!-- Dataful Branding Link -->
+                <a class="flex items-center gap-xs text-label-sm text-on-surface-variant hover:opacity-80 transition-opacity ml-md md:ml-0 md:border-l md:border-outline-variant md:pl-md" href="https://dataful.in/" target="_blank">
+                    <span class="opacity-70 dark:text-gray-300">Powered by</span>
+                    <!-- Dataful transparent white/dark logo styled for darkmode support -->
+                    <img alt="Dataful Logo" class="h-4 w-auto dark:invert dark:brightness-200" src="https://dataful.in/_next/image/?url=%2F_next%2Fstatic%2Fmedia%2Flogo.5abd4ad9.png&w=3840&q=75">
+                </a>
+            </div>
+            
+            <nav class="flex items-center gap-lg font-label text-label-sm">
+                <a class="text-on-surface-variant dark:text-gray-400 hover:text-on-surface dark:hover:text-[#f3f0ef] transition-colors" href="#/docs">
+                    Documentation
+                </a>
+                <a class="text-on-surface-variant dark:text-gray-400 hover:text-on-surface dark:hover:text-[#f3f0ef] transition-colors" href="https://github.com" target="_blank">
+                    GitHub
+                </a>
+            </nav>
+        </div>
+    </footer>
+
+    <!-- Logic Controller and Router -->
+    <script>
+        let currentCategory = 'all';
+        let searchKeyword = '';
+
+        // Dynamic Router
+        function handleRoute() {
+            const hash = window.location.hash || '#/';
+            
+            // Hide all pages
+            document.getElementById('home-view').classList.add('hidden');
+            document.getElementById('detail-view').classList.add('hidden');
+            document.getElementById('docs-view').classList.add('hidden');
+            
+            // Sync search inputs
+            const headerSearch = document.getElementById('header-search');
+            if (hash !== '#/' && hash !== '#/home' && hash !== '') {
+                // Not on home, keep search but don't bind typing to live filtering
+            } else {
+                // Bind header search to live typing on homepage
+                if (headerSearch) {
+                    headerSearch.value = searchKeyword;
+                }
+            }
+
+            // Scroll to top
+            window.scrollTo({ top: 0, behavior: 'instant' });
+
+            if (hash === '#/' || hash === '#/home' || hash === '') {
+                renderHome();
+                document.getElementById('home-view').classList.remove('hidden');
+                document.getElementById('home-view').classList.add('animate-fade-in');
+            } else if (hash.startsWith('#/dataset/')) {
+                const id = hash.replace('#/dataset/', '');
+                const dataset = DATASETS.find(d => d.id === id);
+                if (dataset) {
+                    renderDetail(dataset);
+                    document.getElementById('detail-view').classList.remove('hidden');
+                    document.getElementById('detail-view').classList.add('animate-fade-in');
+                } else {
+                    window.location.hash = '#/';
+                }
+            } else if (hash === '#/docs') {
+                document.getElementById('docs-view').classList.remove('hidden');
+                document.getElementById('docs-view').classList.add('animate-fade-in');
+            } else {
+                window.location.hash = '#/';
+            }
+        }
+
+        // Render Home View Catalog
+        function renderHome() {
+            // Render Category Filter Chips
+            const filterContainer = document.getElementById('category-filters');
+            const categories = ['all', ...new Set(DATASETS.map(d => d.category.toLowerCase()))];
+            
+            filterContainer.innerHTML = categories.map(cat => {
+                const label = cat.charAt(0).toUpperCase() + cat.slice(1);
+                const isActive = currentCategory === cat;
+                const activeClasses = 'bg-primary text-on-primary dark:bg-[#ffb1c2] dark:text-[#3f0019] border-transparent font-semibold shadow-sm';
+                const inactiveClasses = 'bg-surface-container dark:bg-[#2c2c2e] hover:bg-surface-container-high dark:hover:bg-[#3c3c3e] border-outline-variant dark:border-[#3d3d40] text-on-surface-variant dark:text-gray-300';
+                
+                return `<button onclick="setCategory('${cat}')" class="px-md py-sm rounded-lg border text-label-sm font-label transition-all cursor-pointer ${isActive ? activeClasses : inactiveClasses}">${label}</button>`;
+            }).join('');
+
+            filterAndRenderDatasets();
+        }
+
+        function setCategory(cat) {
+            currentCategory = cat;
+            renderHome();
+        }
+
+        function triggerSearch() {
+            const heroSearch = document.getElementById('hero-search');
+            searchKeyword = heroSearch.value.trim().toLowerCase();
+            const headerSearch = document.getElementById('header-search');
+            if (headerSearch) headerSearch.value = searchKeyword;
+            
+            if (window.location.hash !== '#/' && window.location.hash !== '#/home' && window.location.hash !== '') {
+                window.location.hash = '#/';
+            } else {
+                filterAndRenderDatasets();
+            }
+        }
+
+        // Filter, Sort and Render Dataset Cards
+        function filterAndRenderDatasets() {
+            const grid = document.getElementById('dataset-grid');
+            const noResults = document.getElementById('no-results');
+            
+            // Get values
+            const sortVal = document.getElementById('sort-select').value;
+            
+            let filtered = DATASETS.filter(d => {
+                const matchesCat = currentCategory === 'all' || d.category.toLowerCase() === currentCategory;
+                const matchesSearch = !searchKeyword || 
+                    d.name.toLowerCase().includes(searchKeyword) ||
+                    d.description.toLowerCase().includes(searchKeyword) ||
+                    d.tags.some(t => t.toLowerCase().includes(searchKeyword)) ||
+                    d.category.toLowerCase().includes(searchKeyword);
+                
+                return matchesCat && matchesSearch;
+            });
+
+            // Sorting logic
+            if (sortVal === 'alphabetical') {
+                filtered.sort((a, b) => a.name.localeCompare(b.name));
+            } else if (sortVal === 'rows') {
+                // Rows parsing (e.g. "2.4M rows", "700+ rows")
+                const parseRows = str => {
+                    const clean = str.replace(/[^\d.kKmM]/g, '').toLowerCase();
+                    if (clean.includes('m')) return parseFloat(clean) * 1000000;
+                    if (clean.includes('k')) return parseFloat(clean) * 1000;
+                    return parseInt(clean) || 0;
+                };
+                filtered.sort((a, b) => parseRows(b.rows) - parseRows(a.rows));
+            }
+
+            // Render
+            if (filtered.length === 0) {
+                grid.innerHTML = '';
+                noResults.classList.remove('hidden');
+            } else {
+                noResults.classList.add('hidden');
+                grid.innerHTML = filtered.map(d => `
+                    <div onclick="navigateToDataset('${d.id}')" class="bg-surface-container-lowest dark:bg-[#1c1c1e] border border-outline-variant dark:border-[#2d2d30] rounded-xl flex flex-col hover:border-primary dark:hover:border-[#ffb1c2] transition-all group cursor-pointer shadow-sm">
+                        <div class="p-lg border-b border-outline-variant dark:border-[#2d2d30] bg-surface-container-low/30 dark:bg-[#202022] rounded-t-xl">
+                            <div class="flex justify-between items-start mb-sm">
+                                <span class="bg-surface-container-highest dark:bg-[#2d2d30] text-on-surface-variant dark:text-gray-300 px-sm py-xs text-label-sm font-label rounded uppercase tracking-wider">${d.category}</span>
+                                <span class="material-symbols-outlined text-primary dark:text-[#ffb1c2] group-hover:scale-110 transition-transform" style="font-variation-settings: 'FILL' 1;">
+                                    ${d.icon}
+                                </span>
+                            </div>
+                            <h3 class="font-display text-title-lg font-bold text-on-surface dark:text-[#f3f0ef] mb-xs group-hover:text-primary dark:group-hover:text-[#ffb1c2] transition-colors">${d.name}</h3>
+                            <p class="font-body text-body-md text-on-surface-variant dark:text-gray-400 line-clamp-2">${d.description}</p>
+                        </div>
+                        <div class="p-lg flex-grow flex flex-col justify-between">
+                            <div class="flex items-center gap-md mb-md">
+                                <div class="flex items-center gap-xs">
+                                    <span class="material-symbols-outlined text-on-surface-variant dark:text-gray-400 text-body-md">list_alt</span>
+                                    <span class="text-label-sm font-label text-on-surface dark:text-[#f3f0ef]">${d.rows}</span>
+                                </div>
+                                <div class="flex items-center gap-xs">
+                                    <span class="material-symbols-outlined text-on-surface-variant dark:text-gray-400 text-body-md">update</span>
+                                    <span class="text-label-sm font-label text-on-surface dark:text-[#f3f0ef]">${d.updated}</span>
+                                </div>
+                            </div>
+                            <div class="flex flex-wrap gap-xs">
+                                ${d.tags.map(t => `<span class="bg-surface-container-high dark:bg-[#2c2c2e] text-on-surface dark:text-gray-300 px-sm py-0.5 font-label text-[10px] rounded uppercase font-medium">${t}</span>`).join('')}
+                            </div>
+                        </div>
+                        <div class="px-lg py-md border-t border-outline-variant dark:border-[#2d2d30] flex justify-between items-center bg-surface-container-low/20 dark:bg-[#202022] rounded-b-xl">
+                            <span class="text-label-sm font-label text-on-surface-variant dark:text-gray-400">View details</span>
+                            <span class="material-symbols-outlined text-outline dark:text-gray-400 group-hover:translate-x-1 transition-transform">arrow_forward</span>
+                        </div>
+                    </div>
+                `).join('');
+            }
+        }
+
+        function navigateToDataset(id) {
+            window.location.hash = `#/dataset/${id}`;
+        }
+
+        function clearAllFilters() {
+            currentCategory = 'all';
+            searchKeyword = '';
+            document.getElementById('hero-search').value = '';
+            const hs = document.getElementById('header-search');
+            if (hs) hs.value = '';
+            renderHome();
+        }
+
+        // Render Dataset Detailed Page
+        function renderDetail(dataset) {
+            // Set Breadcrumbs
+            document.getElementById('detail-breadcrumb-category').textContent = dataset.category;
+            document.getElementById('detail-breadcrumb-name').textContent = dataset.name;
+
+            // Set Title & Description
+            document.getElementById('detail-title').textContent = dataset.name;
+            document.getElementById('detail-description').textContent = dataset.description;
+            document.getElementById('detail-schema-count').textContent = `${dataset.schema.length} Fields Defined`;
+
+            // Render Related Datasets sidebar
+            const relatedList = document.getElementById('related-datasets-list');
+            relatedList.innerHTML = dataset.related.map(r => {
+                // If it exists in registry, target it, otherwise generic anchor
+                const targetUrl = DATASETS.some(d => d.id === r.id) ? `#/dataset/${r.id}` : `#/`;
+                return `
+                    <a href="${targetUrl}" class="flex items-center justify-between group hover:text-primary dark:hover:text-[#ffb1c2] transition-colors py-xs border-b border-outline-variant/30 dark:border-[#2d2d30] last:border-b-0">
+                        <span class="font-body text-body-md text-on-surface dark:text-[#f3f0ef] group-hover:text-primary dark:group-hover:text-[#ffb1c2]">${r.name}</span>
+                        <span class="material-symbols-outlined text-[18px] text-outline dark:text-gray-500 group-hover:text-primary dark:group-hover:text-[#ffb1c2] group-hover:translate-x-0.5 transition-transform">chevron_right</span>
+                    </a>
+                `;
+            }).join('');
+
+            // Render Download Center sidebar buttons
+            const downloadContainer = document.getElementById('download-center-buttons');
+            downloadContainer.innerHTML = `
+                <a href="${dataset.download.csv}" download target="_blank" class="flex items-center justify-between px-md py-sm border border-outline-variant dark:border-[#2d2d30] rounded-lg hover:border-primary dark:hover:border-[#ffb1c2] hover:bg-primary/5 dark:hover:bg-[#ffb1c2]/5 transition-all group bg-surface-container-lowest dark:bg-[#18181a]">
+                    <span class="flex items-center gap-sm">
+                        <span class="material-symbols-outlined text-secondary dark:text-gray-300">description</span>
+                        <span class="font-label text-label-md text-on-surface dark:text-[#f3f0ef] font-medium">Download .CSV</span>
+                    </span>
+                    <span class="material-symbols-outlined text-outline dark:text-gray-400 group-hover:text-primary dark:group-hover:text-[#ffb1c2] group-hover:scale-105 transition-all">download</span>
+                </a>
+                <a href="${dataset.download.pdf}" download target="_blank" class="flex items-center justify-between px-md py-sm border border-outline-variant dark:border-[#2d2d30] rounded-lg hover:border-primary dark:hover:border-[#ffb1c2] hover:bg-primary/5 dark:hover:bg-[#ffb1c2]/5 transition-all group bg-surface-container-lowest dark:bg-[#18181a]">
+                    <span class="flex items-center gap-sm">
+                        <span class="material-symbols-outlined text-secondary dark:text-gray-300">picture_as_pdf</span>
+                        <span class="font-label text-label-md text-on-surface dark:text-[#f3f0ef] font-medium">Data Dictionary (PDF)</span>
+                    </span>
+                    <span class="material-symbols-outlined text-outline dark:text-gray-400 group-hover:text-primary dark:group-hover:text-[#ffb1c2] group-hover:scale-105 transition-all">download</span>
+                </a>
+                <a href="${dataset.download.json}" download target="_blank" class="flex items-center justify-between px-md py-sm border border-outline-variant dark:border-[#2d2d30] rounded-lg hover:border-primary dark:hover:border-[#ffb1c2] hover:bg-primary/5 dark:hover:bg-[#ffb1c2]/5 transition-all group bg-surface-container-lowest dark:bg-[#18181a]">
+                    <span class="flex items-center gap-sm">
+                        <span class="material-symbols-outlined text-secondary dark:text-gray-300">data_object</span>
+                        <span class="font-label text-label-md text-on-surface dark:text-[#f3f0ef] font-medium">API Schema (.JSON)</span>
+                    </span>
+                    <span class="material-symbols-outlined text-outline dark:text-gray-400 group-hover:text-primary dark:group-hover:text-[#ffb1c2] group-hover:scale-105 transition-all">download</span>
+                </a>
+            `;
+
+            // Render Schema Definition Table
+            const tbody = document.getElementById('detail-schema-tbody');
+            tbody.innerHTML = dataset.schema.map(f => `
+                <tr class="hover:bg-surface-container dark:hover:bg-[#2c2c2e] transition-colors ${f.primary ? 'bg-primary/5 dark:bg-[#ffb1c2]/5' : ''}">
+                    <td class="px-md py-sm font-label text-label-sm text-primary dark:text-[#ffb1c2] font-semibold flex items-center gap-xs">
+                        ${f.name}
+                        ${f.primary ? `<span class="material-symbols-outlined text-[16px] text-[#b01b55] dark:text-[#ffb1c2] font-normal" style="font-variation-settings: 'FILL' 1;" title="Primary Key">key</span>` : ''}
+                    </td>
+                    <td class="px-md py-sm">
+                        <span class="bg-surface-container-high dark:bg-[#2c2c2e] text-on-surface dark:text-gray-300 px-xs py-1 rounded font-label text-[11px] font-medium uppercase tracking-wider">${f.type}</span>
+                    </td>
+                    <td class="px-md py-sm text-on-surface-variant dark:text-gray-300 text-body-md">${f.desc}</td>
+                    <td class="px-md py-sm font-label text-label-sm italic text-outline dark:text-gray-400">${f.sample}</td>
+                </tr>
+            `).join('');
+
+            // Reset Data Preview Search
+            document.getElementById('preview-search').value = '';
+
+            // Setup Data Preview Tab contents
+            renderDetailPreviewTable(dataset);
+
+            // Setup Implementation Code Blocks
+            document.getElementById('code-python').textContent = dataset.pythonCode;
+            document.getElementById('code-curl').textContent = dataset.curlCode;
+
+            // Make sure Preview Tab is initially active
+            switchDetailTab('preview');
+        }
+
+        // Render preview table content
+        function renderDetailPreviewTable(dataset, filterStr = '') {
+            const thead = document.getElementById('detail-preview-thead');
+            const tbody = document.getElementById('detail-preview-tbody');
+            
+            // Build the Headers
+            thead.innerHTML = dataset.previewHeaders.map(h => `<th class="px-md py-sm border-b border-outline-variant dark:border-[#2d2d30] font-medium">${h}</th>`).join('');
+
+            // Build Rows
+            const filteredRows = dataset.preview.filter(row => {
+                if (!filterStr) return true;
+                return Object.values(row).some(val => String(val).toLowerCase().includes(filterStr));
+            });
+
+            if (filteredRows.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="${dataset.previewHeaders.length}" class="px-md py-xl text-center text-on-surface-variant dark:text-gray-400 italic">No matching records found.</td></tr>`;
+            } else {
+                tbody.innerHTML = filteredRows.map(row => `
+                    <tr class="hover:bg-surface-container/50 dark:hover:bg-[#2c2c2e]/50 transition-colors">
+                        ${dataset.previewHeaders.map(h => `<td class="px-md py-sm">${row[h] !== undefined ? row[h] : '-'}</td>`).join('')}
+                    </tr>
+                `).join('');
+            }
+        }
+
+        // Live filtering inside detailed data preview table
+        function filterPreviewTable() {
+            const activeHash = window.location.hash;
+            if (!activeHash.startsWith('#/dataset/')) return;
+            const id = activeHash.replace('#/dataset/', '');
+            const dataset = DATASETS.find(d => d.id === id);
+            if (!dataset) return;
+
+            const filterStr = document.getElementById('preview-search').value.trim().toLowerCase();
+            renderDetailPreviewTable(dataset, filterStr);
+        }
+
+        // Simulate streaming more records
+        function simulateLoadMore() {
+            const toast = document.getElementById('toast-message');
+            toast.classList.remove('hidden');
+            setTimeout(() => {
+                toast.textContent = "Data feed active. 100 fresh records fetched and appended successfully.";
+                setTimeout(() => {
+                    toast.classList.add('hidden');
+                    toast.textContent = "Connected to endpoint. Fetching chunk from Parquet storage stream...";
+                }, 3000);
+            }, 1500);
+        }
+
+        // Switch Tabs on Dataset Detail page
+        function switchDetailTab(tab) {
+            const previewBtn = document.getElementById('tab-btn-preview');
+            const implBtn = document.getElementById('tab-btn-impl');
+            const previewContent = document.getElementById('detail-content-preview');
+            const implContent = document.getElementById('detail-content-impl');
+
+            if (tab === 'preview') {
+                previewBtn.className = "px-lg py-md font-label text-label-md border-b-2 border-primary text-primary dark:border-[#ffb1c2] dark:text-[#ffb1c2] font-semibold transition-all";
+                implBtn.className = "px-lg py-md font-label text-label-md border-b-2 border-transparent text-on-surface-variant dark:text-gray-400 hover:text-on-surface dark:hover:text-[#f3f0ef] font-semibold transition-all";
+                
+                previewContent.classList.remove('hidden');
+                implContent.classList.add('hidden');
+            } else {
+                implBtn.className = "px-lg py-md font-label text-label-md border-b-2 border-primary text-primary dark:border-[#ffb1c2] dark:text-[#ffb1c2] font-semibold transition-all";
+                previewBtn.className = "px-lg py-md font-label text-label-md border-b-2 border-transparent text-on-surface-variant dark:text-gray-400 hover:text-on-surface dark:hover:text-[#f3f0ef] font-semibold transition-all";
+                
+                implContent.classList.remove('hidden');
+                previewContent.classList.add('hidden');
+            }
+        }
+
+        // Initialize and Toggle Dark Mode Theme
+        function initTheme() {
+            if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                document.documentElement.classList.add('dark');
+                document.documentElement.classList.remove('light');
+                updateDarkModeIcon(true);
+            } else {
+                document.documentElement.classList.add('light');
+                document.documentElement.classList.remove('dark');
+                updateDarkModeIcon(false);
+            }
+        }
+
+        function toggleTheme() {
+            const isDark = document.documentElement.classList.contains('dark');
+            if (isDark) {
+                document.documentElement.classList.remove('dark');
+                document.documentElement.classList.add('light');
+                localStorage.theme = 'light';
+                updateDarkModeIcon(false);
+            } else {
+                document.documentElement.classList.add('dark');
+                document.documentElement.classList.remove('light');
+                localStorage.theme = 'dark';
+                updateDarkModeIcon(true);
+            }
+        }
+
+        function updateDarkModeIcon(isDark) {
+            const themeBtn = document.getElementById('theme-toggle-btn');
+            if (themeBtn) {
+                themeBtn.textContent = isDark ? 'light_mode' : 'dark_mode';
+            }
+        }
+
+        // Sync header input key typing with homepage dataset cards filtering
+        const headerSearchInput = document.getElementById('header-search');
+        if (headerSearchInput) {
+            headerSearchInput.addEventListener('input', (e) => {
+                searchKeyword = e.target.value.trim().toLowerCase();
+                
+                // If on details view, navigate home first
+                if (window.location.hash !== '#/' && window.location.hash !== '#/home' && window.location.hash !== '') {
+                    window.location.hash = '#/';
+                } else {
+                    const hs = document.getElementById('hero-search');
+                    if (hs) hs.value = searchKeyword;
+                    filterAndRenderDatasets();
+                }
+            });
+        }
+
+        // Routing listeners
+        window.addEventListener('hashchange', handleRoute);
+        window.addEventListener('load', () => {
+            initTheme();
+            handleRoute();
+        });
+    </script>
+</body>
+</html>

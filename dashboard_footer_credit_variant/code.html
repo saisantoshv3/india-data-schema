@@ -1,0 +1,235 @@
+<!DOCTYPE html><html class="light" lang="en" style=""><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>OpenData Dicts | Central Repository Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;700&amp;family=Roboto:wght@400;500;700&amp;family=Montserrat:wght@400;500;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">tailwind.config = {darkMode: "class", theme: {extend: {colors: {"surface-container-high": "#eae7e7", "on-surface": "#1b1b1c", "surface-container-lowest": "#ffffff", "on-tertiary": "#ffffff", "surface-container": "#f0eded", "tertiary-fixed-dim": "#ffb1c3", "tertiary-container": "#e2216f", "surface-container-highest": "#e5e2e1", "on-primary-container": "#fffbff", "surface-container-low": "#f6f3f2", error: "#ba1a1a", "on-background": "#1b1b1c", "on-tertiary-fixed-variant": "#8f0041", "primary-fixed-dim": "#ffb1c2", "on-primary": "#ffffff", "primary-container": "#d2386d", background: "#fcf9f8", "inverse-surface": "#303030", "secondary-fixed-dim": "#c6c6c7", "on-secondary": "#ffffff", "on-error": "#ffffff", "surface-dim": "#dcd9d9", "primary-fixed": "#ffd9e0", "on-surface-variant": "#584045", "inverse-primary": "#ffb1c2", "on-secondary-fixed": "#1a1c1c", "error-container": "#ffdad6", "surface-bright": "#fcf9f8", "secondary-fixed": "#e2e2e2", secondary: "#5d5f5f", "on-error-container": "#93000a", "surface-variant": "#e5e2e1", "on-secondary-fixed-variant": "#454747", outline: "#8c7075", "secondary-container": "#dfe0e0", "on-tertiary-fixed": "#3f0019", "on-secondary-container": "#616363", "surface-tint": "#b31e58", primary: "#b01b55", "on-tertiary-container": "#140004", "outline-variant": "#dfbec4", surface: "#fcf9f8", "inverse-on-surface": "#f3f0ef", "on-primary-fixed": "#3f0019", "tertiary-fixed": "#ffd9e0", tertiary: "#bb0057", "on-primary-fixed-variant": "#8f0041"}, borderRadius: {DEFAULT: "0.25rem", lg: "0.5rem", xl: "0.75rem", full: "9999px"}, spacing: {lg: "1.5rem", base: "4px", md: "1rem", sm: "0.5rem", "container-max": "1280px", xs: "0.25rem", xl: "2.5rem", gutter: "1rem"}, fontFamily: {"display-lg": ["Geist"], "headline-md": ["Geist"], "headline-md-mobile": ["Geist"], "headline-sm": ["Geist"], "label-md": ["JetBrains Mono"], "body-md": ["Geist"], "label-sm": ["JetBrains Mono"], "body-lg": ["Geist"], "title-lg": ["Geist"], headline: ["Playfair Display"], display: ["Playfair Display"], body: ["Roboto"], label: ["Montserrat"]}, fontSize: {"display-lg": ["48px", {lineHeight: "56px", letterSpacing: "-0.02em", fontWeight: "700"}], "headline-md": ["32px", {lineHeight: "40px", letterSpacing: "-0.01em", fontWeight: "600"}], "headline-md-mobile": ["28px", {lineHeight: "36px", fontWeight: "600"}], "headline-sm": ["24px", {lineHeight: "32px", fontWeight: "600"}], "label-md": ["13px", {lineHeight: "18px", fontWeight: "500"}], "body-md": ["14px", {lineHeight: "20px", fontWeight: "400"}], "label-sm": ["12px", {lineHeight: "16px", fontWeight: "400"}], "body-lg": ["16px", {lineHeight: "24px", fontWeight: "400"}], "title-lg": ["20px", {lineHeight: "28px", fontWeight: "600"}]}}}};</script>
+<style>
+        body {
+            font-family: 'Geist', sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            display: inline-block;
+            vertical-align: middle;
+            line-height: 1;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background min-h-screen flex flex-col">
+<!-- TopNavBar -->
+<header class="bg-surface-container-lowest dark:bg-inverse-surface border-b border-outline-variant dark:border-outline docked full-width top-0 sticky z-50 flat no shadows">
+<div class="flex justify-between items-center w-full px-lg py-sm max-w-container-max mx-auto">
+<div class="flex items-center gap-xl">
+<span class="font-title-lg text-title-lg font-bold text-on-surface dark:text-inverse-on-surface cursor-pointer active:opacity-80 transition-opacity">India Data Schema</span>
+<!-- Search Bar (on_left) -->
+<div class="hidden md:flex items-center bg-surface-container rounded-lg px-md py-xs border border-outline-variant focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20 transition-all w-80">
+<span class="material-symbols-outlined text-on-surface-variant mr-sm">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-body-md w-full p-0" placeholder="Search schemas..." type="text">
+</div>
+</div>
+<nav class="hidden md:flex items-center gap-lg font-body-md text-body-md">
+<a class="text-primary dark:text-primary-fixed border-b-2 border-primary dark:border-primary-fixed pb-1 cursor-pointer active:opacity-80 transition-opacity" href="#">Explore</a>
+<a class="text-on-surface-variant dark:text-on-surface-variant hover:text-primary dark:hover:text-primary-fixed transition-colors cursor-pointer active:opacity-80 transition-opacity" href="#">Schemas</a>
+<a class="text-on-surface-variant dark:text-on-surface-variant hover:text-primary dark:hover:text-primary-fixed transition-colors cursor-pointer active:opacity-80 transition-opacity" href="#">API</a>
+<a class="text-on-surface-variant dark:text-on-surface-variant hover:text-primary dark:hover:text-primary-fixed transition-colors cursor-pointer active:opacity-80 transition-opacity" href="#">Docs</a>
+</nav>
+<div class="flex items-center gap-md">
+<button class="material-symbols-outlined text-on-surface-variant hover:text-on-surface transition-colors cursor-pointer active:opacity-80 transition-opacity">dark_mode</button>
+<button class="bg-primary text-on-primary px-md py-xs font-label-md text-label-md rounded-lg hover:opacity-90 transition-opacity cursor-pointer active:opacity-80">GitHub</button>
+</div>
+</div>
+</header>
+<main class="flex-grow">
+<!-- Hero Section -->
+<section class="bg-surface-container-low py-xl px-lg">
+<div class="max-w-container-max mx-auto text-center">
+<h1 class="font-display-lg text-display-lg text-on-surface mb-md">The Open-Source <br class="hidden md:block"> Data Dictionary&nbsp;</h1>
+<p class="text-body-lg font-body-lg text-on-surface-variant max-w-2xl mx-auto mb-xl">
+                    Standardize your data pipelines with verified schemas for corporate, geographic, and sectoral datasets. Access metadata, types, and constraints in one unified index.
+                </p>
+<!-- Hero Search (Redundant but prominent) -->
+<div class="max-w-xl mx-auto bg-surface-container-lowest border border-outline-variant rounded-xl p-xs flex items-center gap-xs">
+<span class="material-symbols-outlined text-on-surface-variant ml-md">database</span>
+<input class="flex-grow bg-transparent border-none focus:ring-0 font-body-md text-body-md py-md px-sm" placeholder="Search NHAI Toll Plazas, Companies." type="text">
+<button class="bg-primary text-on-primary px-xl py-md rounded-lg font-label-md text-label-md hover:opacity-90 transition-opacity">
+                        Find Schema
+                    </button>
+</div>
+</div>
+</section>
+<!-- Grid Container -->
+<section class="max-w-container-max mx-auto px-lg py-xl">
+<div class="flex justify-between items-center mb-xl">
+<h2 class="font-headline-md text-headline-md text-on-surface">Verified Datasets</h2>
+<div class="flex items-center gap-sm">
+<span class="text-label-sm font-label-sm text-on-surface-variant">Sort by:</span>
+<select class="bg-surface-container-low border-outline-variant rounded px-md py-xs text-label-sm font-label-sm focus:ring-primary focus:border-primary">
+<option>Most Popular</option>
+<option>Recent</option>
+<option>Data Size</option>
+</select>
+</div>
+</div>
+<!-- Dataset Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-lg">
+<!-- Card 1: MCA -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl flex flex-col hover:border-primary transition-all group">
+<div class="p-lg border-b border-outline-variant bg-surface-container-low/30">
+<div class="flex justify-between items-start mb-sm">
+<span class="bg-surface-container-highest text-on-surface-variant px-sm py-xs text-label-sm font-label-sm rounded uppercase tracking-tighter">Government</span>
+<span class="material-symbols-outlined text-primary group-hover:scale-110 transition-transform cursor-pointer" data-icon="verified" style="font-variation-settings: 'FILL' 1;">verified</span>
+</div>
+<h3 class="font-title-lg text-title-lg text-on-surface mb-xs">MCA Companies Registry</h3>
+<p class="text-body-md font-body-md text-on-surface-variant line-clamp-2">Ministry of Corporate Affairs master data for all registered entities in India including DIN and CIN mappings.</p>
+</div>
+<div class="p-lg flex-grow">
+<div class="flex items-center gap-md mb-md">
+<div class="flex items-center gap-xs">
+<span class="material-symbols-outlined text-on-surface-variant text-body-md">list_alt</span>
+<span class="text-label-sm font-label-sm text-on-surface">2.4M rows</span>
+</div>
+<div class="flex items-center gap-xs">
+<span class="material-symbols-outlined text-on-surface-variant text-body-md">update</span>
+<span class="text-label-sm font-label-sm text-on-surface">7 days ago</span>
+</div>
+</div>
+<div class="flex flex-wrap gap-xs mb-lg">
+<span class="bg-surface-container-high text-on-surface px-sm py-xs font-label-sm text-[11px] rounded uppercase">Corporate</span>
+<span class="bg-surface-container-high text-on-surface px-sm py-xs font-label-sm text-[11px] rounded uppercase">Registry</span>
+</div>
+</div>
+<div class="px-lg py-md border-t border-outline-variant flex justify-between items-center bg-surface-container-low/20">
+<span class="text-label-sm font-label-sm text-on-surface-variant">Quick Download:</span>
+<div class="flex gap-sm">
+<button class="material-symbols-outlined text-on-surface-variant hover:text-primary transition-colors" title="Download CSV">csv</button>
+<button class="material-symbols-outlined text-on-surface-variant hover:text-primary transition-colors" title="Download JSON">data_object</button>
+<button class="material-symbols-outlined text-on-surface-variant hover:text-primary transition-colors" title="Download Parquet">deployed_code</button>
+</div>
+</div>
+</div>
+<!-- Card 2: LGD -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl flex flex-col hover:border-primary transition-all group">
+<div class="p-lg border-b border-outline-variant bg-surface-container-low/30">
+<div class="flex justify-between items-start mb-sm">
+<span class="bg-surface-container-highest text-on-surface-variant px-sm py-xs text-label-sm font-label-sm rounded uppercase tracking-tighter">Geographic</span>
+<span class="material-symbols-outlined text-primary group-hover:scale-110 transition-transform cursor-pointer" data-icon="map" style="font-variation-settings: 'FILL' 1;">map</span>
+</div>
+<h3 class="font-title-lg text-title-lg text-on-surface mb-xs">Indian Districts (LGD)</h3>
+<p class="text-body-md font-body-md text-on-surface-variant line-clamp-2">Complete Local Government Directory codes for districts, sub-districts, and administrative boundaries.</p>
+</div>
+<div class="p-lg flex-grow">
+<div class="flex items-center gap-md mb-md">
+<div class="flex items-center gap-xs">
+<span class="material-symbols-outlined text-on-surface-variant text-body-md">list_alt</span>
+<span class="text-label-sm font-label-sm text-on-surface">700+ rows</span>
+</div>
+<div class="flex items-center gap-xs">
+<span class="material-symbols-outlined text-on-surface-variant text-body-md">update</span>
+<span class="text-label-sm font-label-sm text-on-surface">14 days ago</span>
+</div>
+</div>
+<div class="flex flex-wrap gap-xs mb-lg">
+<span class="bg-surface-container-high text-on-surface px-sm py-xs font-label-sm text-[11px] rounded uppercase">Admin</span>
+<span class="bg-surface-container-high text-on-surface px-sm py-xs font-label-sm text-[11px] rounded uppercase">India</span>
+</div>
+</div>
+<div class="px-lg py-md border-t border-outline-variant flex justify-between items-center bg-surface-container-low/20">
+<span class="text-label-sm font-label-sm text-on-surface-variant">Quick Download:</span>
+<div class="flex gap-sm">
+<button class="material-symbols-outlined text-on-surface-variant hover:text-primary transition-colors" title="Download CSV">csv</button>
+<button class="material-symbols-outlined text-on-surface-variant hover:text-primary transition-colors" title="Download JSON">data_object</button>
+<button class="material-symbols-outlined text-on-surface-variant hover:text-primary transition-colors" title="Download Parquet">deployed_code</button>
+</div>
+</div>
+</div>
+<!-- Card 3: Airlines -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl flex flex-col hover:border-primary transition-all group">
+<div class="p-lg border-b border-outline-variant bg-surface-container-low/30">
+<div class="flex justify-between items-start mb-sm">
+<span class="bg-surface-container-highest text-on-surface-variant px-sm py-xs text-label-sm font-label-sm rounded uppercase tracking-tighter">Transport</span>
+<span class="material-symbols-outlined text-primary group-hover:scale-110 transition-transform cursor-pointer" data-icon="flight" style="font-variation-settings: 'FILL' 1;">flight</span>
+</div>
+<h3 class="font-title-lg text-title-lg text-on-surface mb-xs">Airline Codes</h3>
+<p class="text-body-md font-body-md text-on-surface-variant line-clamp-2">IATA and ICAO airline codes including carrier names, callsigns, and country of origin.</p>
+</div>
+<div class="p-lg flex-grow">
+<div class="flex items-center gap-md mb-md">
+<div class="flex items-center gap-xs">
+<span class="material-symbols-outlined text-on-surface-variant text-body-md">list_alt</span>
+<span class="text-label-sm font-label-sm text-on-surface">9k rows</span>
+</div>
+<div class="flex items-center gap-xs">
+<span class="material-symbols-outlined text-on-surface-variant text-body-md">update</span>
+<span class="text-label-sm font-label-sm text-on-surface">Current</span>
+</div>
+</div>
+<div class="flex flex-wrap gap-xs mb-lg">
+<span class="bg-surface-container-high text-on-surface px-sm py-xs font-label-sm text-[11px] rounded uppercase">IATA</span>
+<span class="bg-surface-container-high text-on-surface px-sm py-xs font-label-sm text-[11px] rounded uppercase">Aviation</span>
+</div>
+</div>
+<div class="px-lg py-md border-t border-outline-variant flex justify-between items-center bg-surface-container-low/20">
+<span class="text-label-sm font-label-sm text-on-surface-variant">Quick Download:</span>
+<div class="flex gap-sm">
+<button class="material-symbols-outlined text-on-surface-variant hover:text-primary transition-colors" title="Download CSV">csv</button>
+<button class="material-symbols-outlined text-on-surface-variant hover:text-primary transition-colors" title="Download JSON">data_object</button>
+<button class="material-symbols-outlined text-on-surface-variant hover:text-primary transition-colors" title="Download Parquet">deployed_code</button>
+</div>
+</div>
+</div>
+</div>
+<!-- More indicator -->
+<div class="mt-xl text-center">
+<button class="bg-surface-container-high text-on-surface px-xl py-md rounded font-label-md text-label-md hover:bg-surface-dim transition-colors border border-outline-variant">
+                    View All 512 Datasets
+                </button>
+</div>
+</section>
+<!-- Technical Features / Bentoish -->
+<section class="bg-surface-container-highest py-xl">
+<div class="max-w-container-max mx-auto px-lg">
+<div class="grid grid-cols-1 md:grid-cols-3 gap-lg">
+
+
+
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="bg-surface-container-low dark:bg-surface-dim border-t border-outline-variant dark:border-outline full-width">
+<div class="flex flex-col md:flex-row justify-between items-center w-full px-lg py-md max-w-container-max mx-auto gap-md flex-wrap">
+<div class="flex flex-col md:flex-row items-center gap-md flex-wrap">
+<span class="font-title-lg text-title-lg font-bold text-on-surface dark:text-inverse-on-surface">OpenData Dicts</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">© 2026 OpenData Dicts. Released under MIT License.</span><a class="flex items-center gap-xs text-label-sm text-on-surface-variant hover:opacity-80 transition-opacity ml-md md:ml-0 md:border-l md:border-outline-variant md:pl-md" href="https://Dataful.in" target="_blank"><span class="opacity-70">Powered by</span><img alt="Dataful Logo" class="h-4 w-auto" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDaUNBKAMoH-rRncbqVjcY3NQw2rZRgg7jvrYpM55rAsDpsL4jDMxP-PNVWDH7qvRSmkafT5a0_TRHqaGSvvnSjRtEfRsh41VQur7OtXkHL-55Ov-NCR88MSNP4olYjgfsOQLwGeDi90-Cs5A5Do1sVY92RrReg3-UVjiU1l1n4-_UgOqd82P93IgPeC7TON_nnfJLPaeH4M_Q3YkWRKaa-oP7NJadxZ9HOITmmmkZa21ISAnNWhxToE_IX0abVuEEQY59oKAov_NY"></a>
+</div>
+<nav class="flex items-center gap-lg font-label-sm text-label-sm">
+<a class="text-on-surface-variant dark:text-on-surface-variant hover:text-on-surface dark:hover:text-inverse-on-surface transition-colors duration-200" href="#">Documentation</a>
+<a class="text-on-surface-variant dark:text-on-surface-variant hover:text-on-surface dark:hover:text-inverse-on-surface transition-colors duration-200" href="#">GitHub</a>
+<a class="text-on-surface-variant dark:text-on-surface-variant hover:text-on-surface dark:hover:text-inverse-on-surface transition-colors duration-200" href="#">Community</a>
+<a class="text-on-surface-variant dark:text-on-surface-variant hover:text-on-surface dark:hover:text-inverse-on-surface transition-colors duration-200" href="#">Privacy</a>
+</nav>
+</div>
+</footer>
+<script>
+        // Simple micro-interaction for the search bar
+        const searchInput = document.querySelector('input[placeholder="Search schemas..."]');
+        if(searchInput) {
+            searchInput.addEventListener('focus', () => {
+                searchInput.parentElement.classList.add('w-96');
+                searchInput.parentElement.classList.remove('w-80');
+            });
+            searchInput.addEventListener('blur', () => {
+                searchInput.parentElement.classList.add('w-80');
+                searchInput.parentElement.classList.remove('w-96');
+            });
+        }
+    </script>
+
+
+</body></html>

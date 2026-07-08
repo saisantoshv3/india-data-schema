@@ -1,0 +1,231 @@
+<!DOCTYPE html><html class="light" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Dataset Deep-Dive | Districts of India (LGD)</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;700&amp;family=Roboto:wght@400;500;700&amp;family=Montserrat:wght@400;500;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">tailwind.config = {darkMode: "class", theme: {extend: {colors: {"surface-container-high": "#eae7e7", "on-surface": "#1b1b1c", "surface-container-lowest": "#ffffff", "on-tertiary": "#ffffff", "surface-container": "#f0eded", "tertiary-fixed-dim": "#ffb1c3", "tertiary-container": "#e2216f", "surface-container-highest": "#e5e2e1", "on-primary-container": "#fffbff", "surface-container-low": "#f6f3f2", error: "#ba1a1a", "on-background": "#1b1b1c", "on-tertiary-fixed-variant": "#8f0041", "primary-fixed-dim": "#ffb1c2", "on-primary": "#ffffff", "primary-container": "#d2386d", background: "#fcf9f8", "inverse-surface": "#303030", "secondary-fixed-dim": "#c6c6c7", "on-secondary": "#ffffff", "on-error": "#ffffff", "surface-dim": "#dcd9d9", "primary-fixed": "#ffd9e0", "on-surface-variant": "#584045", "inverse-primary": "#ffb1c2", "on-secondary-fixed": "#1a1c1c", "error-container": "#ffdad6", "surface-bright": "#fcf9f8", "secondary-fixed": "#e2e2e2", secondary: "#5d5f5f", "on-error-container": "#93000a", "surface-variant": "#e5e2e1", "on-secondary-fixed-variant": "#454747", outline: "#8c7075", "secondary-container": "#dfe0e0", "on-tertiary-fixed": "#3f0019", "on-secondary-container": "#616363", "surface-tint": "#b31e58", primary: "#b01b55", "on-tertiary-container": "#140004", "outline-variant": "#dfbec4", surface: "#fcf9f8", "inverse-on-surface": "#f3f0ef", "on-primary-fixed": "#3f0019", "tertiary-fixed": "#ffd9e0", tertiary: "#bb0057", "on-primary-fixed-variant": "#8f0041"}, borderRadius: {DEFAULT: "0.25rem", lg: "0.5rem", xl: "0.75rem", full: "9999px"}, spacing: {lg: "1.5rem", base: "4px", md: "1rem", sm: "0.5rem", "container-max": "1280px", xs: "0.25rem", xl: "2.5rem", gutter: "1rem"}, fontFamily: {"display-lg": ["Geist"], "headline-md": ["Geist"], "headline-md-mobile": ["Geist"], "headline-sm": ["Geist"], "label-md": ["JetBrains Mono"], "body-md": ["Geist"], "label-sm": ["JetBrains Mono"], "body-lg": ["Geist"], "title-lg": ["Geist"], headline: ["Playfair Display"], display: ["Playfair Display"], body: ["Roboto"], label: ["Montserrat"]}, fontSize: {"display-lg": ["48px", {lineHeight: "56px", letterSpacing: "-0.02em", fontWeight: "700"}], "headline-md": ["32px", {lineHeight: "40px", letterSpacing: "-0.01em", fontWeight: "600"}], "headline-md-mobile": ["28px", {lineHeight: "36px", fontWeight: "600"}], "headline-sm": ["24px", {lineHeight: "32px", fontWeight: "600"}], "label-md": ["13px", {lineHeight: "18px", fontWeight: "500"}], "body-md": ["14px", {lineHeight: "20px", fontWeight: "400"}], "label-sm": ["12px", {lineHeight: "16px", fontWeight: "400"}], "body-lg": ["16px", {lineHeight: "24px", fontWeight: "400"}], "title-lg": ["20px", {lineHeight: "28px", fontWeight: "600"}]}}}};</script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+            line-height: 1;
+        }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md text-body-md selection:bg-primary-fixed selection:text-on-primary-fixed">
+<!-- TopNavBar -->
+<header class="bg-surface-container-lowest dark:bg-inverse-surface border-b border-outline-variant dark:border-outline docked full-width top-0 sticky z-50 flat no shadows">
+<div class="flex justify-between items-center w-full px-lg py-sm max-w-container-max mx-auto">
+<div class="flex items-center gap-xl">
+<span class="font-title-lg text-title-lg font-bold text-on-surface dark:text-inverse-on-surface">OpenData Dicts</span>
+<nav class="hidden md:flex items-center gap-lg">
+<a class="font-body-md text-body-md text-on-surface-variant dark:text-on-surface-variant hover:text-primary dark:hover:text-primary-fixed transition-colors cursor-pointer active:opacity-80 transition-opacity" href="#">Explore</a>
+<a class="font-body-md text-body-md text-primary dark:text-primary-fixed border-b-2 border-primary dark:border-primary-fixed pb-1 hover:text-primary dark:hover:text-primary-fixed transition-colors cursor-pointer active:opacity-80 transition-opacity" href="#">Schemas</a>
+<a class="font-body-md text-body-md text-on-surface-variant dark:text-on-surface-variant hover:text-primary dark:hover:text-primary-fixed transition-colors cursor-pointer active:opacity-80 transition-opacity" href="#">API</a>
+<a class="font-body-md text-body-md text-on-surface-variant dark:text-on-surface-variant hover:text-primary dark:hover:text-primary-fixed transition-colors cursor-pointer active:opacity-80 transition-opacity" href="#">Docs</a>
+</nav>
+</div>
+<div class="flex items-center gap-md">
+<button class="p-xs hover:bg-surface-container-high rounded-full transition-colors material-symbols-outlined text-on-surface-variant">dark_mode</button>
+<button class="bg-primary-container text-on-primary-container px-md py-xs rounded-lg font-label-md text-label-md hover:opacity-90 transition-opacity">GitHub</button>
+</div>
+</div>
+</header>
+<main class="max-w-container-max mx-auto px-lg py-md">
+<!-- Breadcrumbs -->
+<nav class="flex items-center gap-xs text-on-surface-variant mb-lg font-label-sm text-label-sm">
+<a class="hover:text-primary transition-colors" href="#">Home</a>
+<span class="material-symbols-outlined text-[14px]">chevron_right</span>
+<a class="hover:text-primary transition-colors" href="#">Geographic</a>
+<span class="material-symbols-outlined text-[14px]">chevron_right</span>
+<span class="text-on-surface font-medium">Districts of India</span>
+</nav>
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-xl">
+<!-- Sidebar (Metadata) -->
+<aside class="lg:col-span-3 space-y-lg">
+<div class="bg-surface-container-lowest border border-outline-variant p-md rounded-lg">
+
+<div class="space-y-md"><h3 class="font-title-lg text-title-lg mb-md text-on-surface">Related Datasets</h3><div class="space-y-sm"><a href="#" class="flex items-center justify-between group hover:text-primary transition-colors py-xs"><span class="font-body-md text-body-md">National Census Data 2021</span><span class="material-symbols-outlined text-[18px] text-outline group-hover:text-primary">chevron_right</span></a><a href="#" class="flex items-center justify-between group hover:text-primary transition-colors py-xs"><span class="font-body-md text-body-md">Urban Infrastructure Index</span><span class="material-symbols-outlined text-[18px] text-outline group-hover:text-primary">chevron_right</span></a><a href="#" class="flex items-center justify-between group hover:text-primary transition-colors py-xs"><span class="font-body-md text-body-md">Regional Demographic Trends</span><span class="material-symbols-outlined text-[18px] text-outline group-hover:text-primary">chevron_right</span></a><a href="#" class="flex items-center justify-between group hover:text-primary transition-colors py-xs"><span class="font-body-md text-body-md">State-wise Economic Indicators</span><span class="material-symbols-outlined text-[18px] text-outline group-hover:text-primary">chevron_right</span></a></div></div>
+</div>
+<!-- Download Center -->
+<div class="bg-surface-container-lowest border border-outline-variant p-md rounded-lg">
+<h3 class="font-title-lg text-title-lg mb-md text-on-surface">Download Center</h3>
+<div class="grid grid-cols-1 gap-sm">
+<button class="flex items-center justify-between px-md py-sm border border-outline-variant rounded-lg hover:border-primary hover:bg-primary-container/5 transition-all group">
+<span class="flex items-center gap-sm">
+<span class="material-symbols-outlined text-secondary">csv</span>
+<span class="font-label-md text-label-md">Download .CSV</span>
+</span>
+<span class="material-symbols-outlined text-outline group-hover:text-primary">download</span>
+</button>
+
+
+</div>
+</div>
+</aside>
+<!-- Main Content Area -->
+<section class="lg:col-span-9 space-y-xl">
+<!-- Hero Info -->
+<div class="space-y-sm">
+<h1 class="font-display-lg text-display-lg text-on-surface">Districts of India</h1>
+<p class="text-body-lg font-body-lg text-on-surface-variant max-w-3xl">
+                        A comprehensive directory of all administrative districts in India, indexed with the official Local Government Directory (LGD) codes provided by the Ministry of Panchayati Raj.
+                    </p>
+</div>
+<!-- Interactive Schema Table -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-lg overflow-hidden">
+<div class="p-md border-b border-outline-variant flex justify-between items-center bg-surface-container-low">
+<h2 class="font-title-lg text-title-lg">Schema Definition</h2>
+<span class="font-label-sm text-label-sm text-on-surface-variant">4 Fields Defined</span>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-lowest border-b border-outline-variant">
+<th class="px-md py-sm font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Field Name</th>
+<th class="px-md py-sm font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Type</th>
+<th class="px-md py-sm font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Description</th>
+<th class="px-md py-sm font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Sample Value</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant">
+<tr class="hover:bg-surface-container transition-colors">
+<td class="px-md py-sm font-label-md text-label-md text-primary">District Name</td>
+<td class="px-md py-sm"><span class="bg-surface-container-high px-xs py-1 rounded font-label-sm text-label-sm">STRING</span></td>
+<td class="px-md py-sm text-on-surface-variant">The official name of the district in English.</td>
+<td class="px-md py-sm font-label-sm text-label-sm italic text-outline">"Bangalore Urban"</td>
+</tr>
+<tr class="hover:bg-surface-container transition-colors bg-primary-container/5">
+<td class="px-md py-sm font-label-md text-label-md text-primary flex items-center gap-xs">
+                                        LGD Code
+                                        <span class="material-symbols-outlined text-[16px] text-primary" style="font-variation-settings: 'FILL' 1;" title="Primary Key">key</span>
+</td>
+<td class="px-md py-sm"><span class="bg-surface-container-high px-xs py-1 rounded font-label-sm text-label-sm">INTEGER</span></td>
+<td class="px-md py-sm text-on-surface-variant font-medium">Primary Key. Unique ID assigned by the LGD system.</td>
+<td class="px-md py-sm font-label-sm text-label-sm italic text-outline">553</td>
+</tr>
+<tr class="hover:bg-surface-container transition-colors">
+<td class="px-md py-sm font-label-md text-label-md text-primary">State Name</td>
+<td class="px-md py-sm"><span class="bg-surface-container-high px-xs py-1 rounded font-label-sm text-label-sm">STRING</span></td>
+<td class="px-md py-sm text-on-surface-variant">Name of the state or UT the district belongs to.</td>
+<td class="px-md py-sm font-label-sm text-label-sm italic text-outline">"Karnataka"</td>
+</tr>
+<tr class="hover:bg-surface-container transition-colors">
+<td class="px-md py-sm font-label-md text-label-md text-primary">Establishment Year</td>
+<td class="px-md py-sm"><span class="bg-surface-container-high px-xs py-1 rounded font-label-sm text-label-sm">INTEGER</span></td>
+<td class="px-md py-sm text-on-surface-variant">The year the administrative district was formed.</td>
+<td class="px-md py-sm font-label-sm text-label-sm italic text-outline">1986</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<!-- Tabbed Explorer -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-lg overflow-hidden">
+<div class="flex border-b border-outline-variant">
+<button class="px-lg py-md font-label-md text-label-md border-b-2 border-primary text-primary transition-all" id="tab-preview" onclick="switchTab('preview')">Data Preview</button>
+<button class="px-lg py-md font-label-md text-label-md border-b-2 border-transparent text-on-surface-variant hover:text-on-surface transition-all" id="tab-impl" onclick="switchTab('impl')">Implementation</button>
+</div>
+<div class="p-md block" id="content-preview">
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse text-body-md font-body-md">
+<thead>
+<tr class="bg-surface-container-low text-on-surface-variant">
+<th class="px-md py-sm border-b border-outline-variant">District Name</th>
+<th class="px-md py-sm border-b border-outline-variant">LGD Code</th>
+<th class="px-md py-sm border-b border-outline-variant">State</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant">
+<tr><td class="px-md py-sm">Ahmedabad</td><td class="px-md py-sm">442</td><td class="px-md py-sm">Gujarat</td></tr>
+<tr><td class="px-md py-sm">Baksa</td><td class="px-md py-sm">601</td><td class="px-md py-sm">Assam</td></tr>
+<tr><td class="px-md py-sm">Chamba</td><td class="px-md py-sm">18</td><td class="px-md py-sm">Himachal Pradesh</td></tr>
+<tr><td class="px-md py-sm">Durg</td><td class="px-md py-sm">378</td><td class="px-md py-sm">Chhattisgarh</td></tr>
+<tr><td class="px-md py-sm">Ernakulam</td><td class="px-md py-sm">564</td><td class="px-md py-sm">Kerala</td></tr>
+<tr><td class="px-md py-sm">Firozabad</td><td class="px-md py-sm">155</td><td class="px-md py-sm">Uttar Pradesh</td></tr>
+<tr><td class="px-md py-sm">Gurugram</td><td class="px-md py-sm">73</td><td class="px-md py-sm">Haryana</td></tr>
+<tr><td class="px-md py-sm">Howrah</td><td class="px-md py-sm">313</td><td class="px-md py-sm">West Bengal</td></tr>
+<tr><td class="px-md py-sm">Indore</td><td class="px-md py-sm">418</td><td class="px-md py-sm">Madhya Pradesh</td></tr>
+<tr><td class="px-md py-sm">Jalna</td><td class="px-md py-sm">477</td><td class="px-md py-sm">Maharashtra</td></tr>
+</tbody>
+</table>
+</div>
+<div class="mt-md flex justify-center">
+<button class="text-primary font-label-md text-label-md hover:underline">Load more samples...</button>
+</div>
+</div>
+<div class="hidden p-md bg-inverse-surface text-inverse-on-surface" id="content-impl">
+<div class="space-y-md">
+<div>
+<span class="font-label-sm text-label-sm text-outline-variant block mb-sm">Python (Pandas)</span>
+<pre class="bg-on-surface-variant/20 p-md rounded-lg font-label-md text-label-md overflow-x-auto text-primary-fixed"><code>import pandas as pd
+
+url = "https://api.opendata.in/v2/geo/districts.parquet"
+df = pd.read_parquet(url)
+
+# Filter by state
+karnataka_districts = df[df['state_name'] == 'Karnataka']
+print(karnataka_districts.head())</code></pre>
+</div>
+<div>
+<span class="font-label-sm text-label-sm text-outline-variant block mb-sm">cURL (REST API)</span>
+<pre class="bg-on-surface-variant/20 p-md rounded-lg font-label-md text-label-md overflow-x-auto text-primary-fixed"><code>curl -X GET "https://api.opendata.in/v2/geo/districts?lgd_code=553" \
+     -H "Accept: application/json" \
+     -H "Authorization: Bearer YOUR_API_KEY"</code></pre>
+</div>
+</div>
+</div>
+</div>
+</section>
+</div>
+</main>
+<!-- Footer -->
+<footer class="bg-surface-container-low dark:bg-surface-dim border-t border-outline-variant dark:border-outline full-width mt-xl">
+<div class="flex flex-col md:flex-row justify-between items-center w-full px-lg py-md max-w-container-max mx-auto gap-md">
+<div class="flex items-center gap-md"><span class="font-title-lg text-title-lg font-bold text-on-surface dark:text-inverse-on-surface">OpenData Dicts</span><p class="font-label-sm text-label-sm text-on-surface-variant dark:text-on-surface-variant">© 2024 OpenData Dicts. Released under MIT License.</p><div class="flex items-center gap-xs border-l border-outline-variant pl-md ml-xs"><span class="font-label-sm text-label-sm text-on-surface-variant">Powered by</span><a class="flex items-center" href="https://Dataful.in" target="_blank"><img alt="Dataful Logo" class="h-4 w-auto" src="https://www.gstatic.com/labs-code/stitch/stitch-placeholder-300x300.svg"></a></div></div>
+<nav class="flex items-center gap-lg">
+<a class="font-label-sm text-label-sm text-on-surface-variant dark:text-on-surface-variant hover:text-on-surface dark:hover:text-inverse-on-surface transition-colors duration-200" href="#">Documentation</a>
+<a class="font-label-sm text-label-sm text-primary dark:text-primary-fixed underline hover:text-on-surface dark:hover:text-inverse-on-surface transition-colors duration-200" href="#">GitHub</a>
+<a class="font-label-sm text-label-sm text-on-surface-variant dark:text-on-surface-variant hover:text-on-surface dark:hover:text-inverse-on-surface transition-colors duration-200" href="#">Community</a>
+<a class="font-label-sm text-label-sm text-on-surface-variant dark:text-on-surface-variant hover:text-on-surface dark:hover:text-inverse-on-surface transition-colors duration-200" href="#">Privacy</a>
+</nav>
+</div>
+</footer>
+<script>
+        function switchTab(tab) {
+            const previewTab = document.getElementById('tab-preview');
+            const implTab = document.getElementById('tab-impl');
+            const previewContent = document.getElementById('content-preview');
+            const implContent = document.getElementById('content-impl');
+
+            if (tab === 'preview') {
+                previewTab.classList.add('border-primary', 'text-primary');
+                previewTab.classList.remove('border-transparent', 'text-on-surface-variant');
+                implTab.classList.remove('border-primary', 'text-primary');
+                implTab.classList.add('border-transparent', 'text-on-surface-variant');
+                
+                previewContent.classList.remove('hidden');
+                previewContent.classList.add('block');
+                implContent.classList.add('hidden');
+            } else {
+                implTab.classList.add('border-primary', 'text-primary');
+                implTab.classList.remove('border-transparent', 'text-on-surface-variant');
+                previewTab.classList.remove('border-primary', 'text-primary');
+                previewTab.classList.add('border-transparent', 'text-on-surface-variant');
+                
+                implContent.classList.remove('hidden');
+                implContent.classList.add('block');
+                previewContent.classList.add('hidden');
+            }
+        }
+    </script>
+
+
+
+
+</body></html>
