@@ -2,14 +2,13 @@
 
 This guide explains how to add new datasets, manage downloadable CSV and PDF files, and register them in the OpenData Dicts catalog.
 
-The web portal is a fully static Single Page Application (SPA) designed to be deployed directly on **GitHub Pages (`github.io`)**. Adding or modifying datasets requires **no code changes to the HTML structure**; you only need to register the dataset configuration inside `datasets.js`.
 
 ---
 
 ## Workflow Overview
 
 Adding a dataset to the catalog involves three simple steps:
-1. **Host the Files**: Commit your dataset's CSV, PDF, and JSON schemas to your GitHub repository to generate public URLs.
+1. **Host the Files**: Commit your dataset's CSV and PDF to your GitHub repository to generate public URLs.
 2. **Configure the Metadata**: Add a new configuration block to the `DATASETS` registry in `datasets.js`.
 3. **Deploy**: Push your changes to your GitHub branch. GitHub Pages will build and deploy the update automatically.
 

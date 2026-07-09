@@ -1,21 +1,20 @@
 // OpenData Dicts Dataset Registry
 const DATASETS = [
   {
-    id: "indian-districts-lgd",
-    name: "Indian Districts (LGD)",
-    category: "Geographic",
-    icon: "map",
+    id: "corporate-companies",
+    name: "Corporate Companies",
+    category: "Corporate Sector",
+    icon: "company",
     description: "Complete Local Government Directory codes for districts, sub-districts, and administrative boundaries provided by the Ministry of Panchayati Raj.",
-    rows: "700+ rows",
-    updated: "14 days ago",
-    tags: ["Admin", "India", "LGD", "Geographic"],
+    tags: ["CSR", "Corporate", "Industries"],
     download: {
-      csv: "https://raw.githubusercontent.com/saisantoshv3/electoral_bonds/main/indian_districts_lgd.csv",
-      pdf: "https://raw.githubusercontent.com/saisantoshv3/electoral_bonds/main/indian_districts_lgd.pdf",
-      json: "https://raw.githubusercontent.com/saisantoshv3/electoral_bonds/main/indian_districts_lgd.json"
+      csv: "assets/indian_districts_lgd.csv",
+      pdf: "assets/indian_districts_lgd.pdf",
+      json: "assets/indian_districts_lgd.json"
     },
+    //create hyperlinks for below
     related: [
-      { name: "National Census Data 2021", id: "national-census-data-2021" },
+      { name: "Year, State, District and Company-wise Types of Projects Taken Up, Amount Outlaid and Spent", id: "https://dataful.in/datasets/1612/" },
       { name: "Urban Infrastructure Index", id: "urban-infrastructure-index" },
       { name: "Regional Demographic Trends", id: "regional-demographic-trends" },
       { name: "State-wise Economic Indicators", id: "state-wise-economic-indicators" }
@@ -65,9 +64,9 @@ print(karnataka_districts.head())`,
     updated: "7 days ago",
     tags: ["Corporate", "Registry", "Finance", "Government"],
     download: {
-      csv: "https://raw.githubusercontent.com/saisantoshv3/electoral_bonds/main/mca_companies.csv",
-      pdf: "https://raw.githubusercontent.com/saisantoshv3/electoral_bonds/main/mca_companies.pdf",
-      json: "https://raw.githubusercontent.com/saisantoshv3/electoral_bonds/main/mca_companies.json"
+      csv: "assets/mca_companies.csv",
+      pdf: "assets/mca_companies.pdf",
+      json: "assets/mca_companies.json"
     },
     related: [
       { name: "Company Directors Registry", id: "company-directors-registry" },
@@ -116,9 +115,9 @@ print(df[['Company Name', 'Company Status']].head())`,
     updated: "Current",
     tags: ["IATA", "Aviation", "Transport", "Global"],
     download: {
-      csv: "https://raw.githubusercontent.com/saisantoshv3/electoral_bonds/main/airline_codes.csv",
-      pdf: "https://raw.githubusercontent.com/saisantoshv3/electoral_bonds/main/airline_codes.pdf",
-      json: "https://raw.githubusercontent.com/saisantoshv3/electoral_bonds/main/airline_codes.json"
+      csv: "assets/airline_codes.csv",
+      pdf: "assets/airline_codes.pdf",
+      json: "assets/airline_codes.json"
     },
     related: [
       { name: "Airport Directory", id: "airport-directory" },
