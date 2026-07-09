@@ -4,48 +4,37 @@ const DATASETS = [
     id: "corporate-companies",
     name: "Corporate Companies",
     category: "Corporate Sector",
-    icon: "company",
-    description: "Complete Local Government Directory codes for districts, sub-districts, and administrative boundaries provided by the Ministry of Panchayati Raj.",
+    icon: "apartment",
+    description: "Registry of Corporate Identification Numbers (CIN) for companies registered in India, including comparison data for resolving duplicate or conflicting company records with standardized naming conventions.",
     tags: ["CSR", "Corporate", "Industries"],
     download: {
-      csv: "assets/indian_districts_lgd.csv",
-      pdf: "assets/indian_districts_lgd.pdf",
-      json: "assets/indian_districts_lgd.json"
+      csv: "assets/mca_companies.csv",
+      pdf: "assets/mca_companies.pdf",
+      json: "assets/mca_companies.json"
     },
     //create hyperlinks for below
     related: [
-      { name: "Year, State, District and Company-wise Types of Projects Taken Up, Amount Outlaid and Spent", id: "https://dataful.in/datasets/1612/" },
-      { name: "Urban Infrastructure Index", id: "urban-infrastructure-index" },
-      { name: "Regional Demographic Trends", id: "regional-demographic-trends" },
-      { name: "State-wise Economic Indicators", id: "state-wise-economic-indicators" }
+      { name: "Company-wise types of Projects Taken Up, Amount Outlaid and Spent", id: "https://dataful.in/datasets/1612/" },
+      { name: "Company-wise Names of Companies registered under CSR", id: "https://dataful.in/datasets/1611/" },
+      { name: "Company-wise Average Net Profit, CSR Amount Prescribed and Spent (In Local area and Overall)", id: "https://dataful.in/datasets/1613/" },
     ],
     schema: [
-      { name: "District Name", type: "STRING", primary: false, desc: "The official name of the administrative district in English.", sample: '"Bangalore Urban"' },
-      { name: "LGD Code", type: "INTEGER", primary: true, desc: "Primary Key. Unique ID assigned by the Local Government Directory (LGD) system.", sample: "553" },
-      { name: "State Name", type: "STRING", primary: false, desc: "Name of the state or Union Territory the district belongs to.", sample: '"Karnataka"' },
-      { name: "Establishment Year", type: "INTEGER", primary: false, desc: "The year the administrative district was formally created.", sample: "1986" }
+      { name: "remarks", type: "STRING", primary: false, desc: "Notes about the company record.", sample: '"Company Names aren\'t Matching"' },
+      { name: "current_cin", type: "STRING", primary: false, desc: "Current Corporate Identification Number identifier.", sample: '"CIN-1"' },
+      { name: "to_delete", type: "STRING", primary: true, desc: "CIN marked for deletion.", sample: '"U72200KL2007PTC021228"' },
+      { name: "replace", type: "STRING", primary: false, desc: "Replacement field.", sample: '""' },
+      { name: "cin_1", type: "STRING", primary: false, desc: "First CIN in comparison.", sample: '"U72200KA2007PTC130646"' },
+      { name: "company_name_1", type: "STRING", primary: false, desc: "Company name associated with CIN 1.", sample: '"INFOBLOX TECHNICAL SUPPORT"' },
+      { name: "cin_2", type: "STRING", primary: false, desc: "Second CIN in comparison.", sample: '"U72200KL2007PTC021228"' },
+      { name: "company_name_2", type: "STRING", primary: false, desc: "Company name associated with CIN 2.", sample: '"INFOBLOX TECHNICAL SUPPORT LIMITED"' }
     ],
-    previewHeaders: ["District Name", "LGD Code", "State Name", "Establishment Year"],
+    previewHeaders: ["remarks", "current_cin", "cin_1", "company_name_1", "cin_2", "company_name_2"],
     preview: [
-      { "District Name": "Ahmedabad", "LGD Code": 442, "State Name": "Gujarat", "Establishment Year": 1949 },
-      { "District Name": "Baksa", "LGD Code": 601, "State Name": "Assam", "Establishment Year": 2004 },
-      { "District Name": "Chamba", "LGD Code": 18, "State Name": "Himachal Pradesh", "Establishment Year": 1948 },
-      { "District Name": "Durg", "LGD Code": 378, "State Name": "Chhattisgarh", "Establishment Year": 1906 },
-      { "District Name": "Ernakulam", "LGD Code": 564, "State Name": "Kerala", "Establishment Year": 1958 },
-      { "District Name": "Firozabad", "LGD Code": 155, "State Name": "Uttar Pradesh", "Establishment Year": 1989 },
-      { "District Name": "Gurugram", "LGD Code": 73, "State Name": "Haryana", "Establishment Year": 1966 },
-      { "District Name": "Howrah", "LGD Code": 313, "State Name": "West Bengal", "Establishment Year": 1938 },
-      { "District Name": "Indore", "LGD Code": 418, "State Name": "Madhya Pradesh", "Establishment Year": 1948 },
-      { "District Name": "Jalna", "LGD Code": 477, "State Name": "Maharashtra", "Establishment Year": 1981 },
-      { "District Name": "Kanchipuram", "LGD Code": 603, "State Name": "Tamil Nadu", "Establishment Year": 1997 },
-      { "District Name": "Leh Ladakh", "LGD Code": 12, "State Name": "Ladakh", "Establishment Year": 1979 },
-      { "District Name": "Mysuru", "LGD Code": 557, "State Name": "Karnataka", "Establishment Year": 1947 },
-      { "District Name": "Nashik", "LGD Code": 512, "State Name": "Maharashtra", "Establishment Year": 1869 },
-      { "District Name": "Patna", "LGD Code": 230, "State Name": "Bihar", "Establishment Year": 1825 }
+      { "remarks": "Company Names aren't Matching", "current_cin": "CIN-1", "cin_1": "U72200KA2007PTC130646", "company_name_1": "INFOBLOX TECHNICAL", "cin_2": "U72200KL2007PTC021228", "company_name_2": "INFOBLOX LIMITED" }
     ],
     pythonCode: `import pandas as pd
 
-url = "https://raw.githubusercontent.com/saisantoshv3/electoral_bonds/main/indian_districts_lgd.csv"
+url = "https://raw.githubusercontent.com/saisantoshv3/electoral_bonds/main/mca_companies.csv"
 df = pd.read_csv(url)
 
 # Filter by state
@@ -55,95 +44,64 @@ print(karnataka_districts.head())`,
      -H "Accept: application/json"`
   },
   {
-    id: "mca-companies-registry",
-    name: "MCA Companies Registry",
-    category: "Government",
-    icon: "verified",
-    description: "Ministry of Corporate Affairs master data for all registered entities in India including DIN and CIN mappings.",
-    rows: "2.4M rows",
-    updated: "7 days ago",
-    tags: ["Corporate", "Registry", "Finance", "Government"],
+    id: "diseases-registry",
+    name: "Diseases and Illnesses Registry",
+    category: "Healthcare",
+    icon: "medical_services",
+    description: "Comprehensive standardized registry of disease and illness names used across India's healthcare system for consistent medical reporting.",
+    tags: ["Healthcare", "Medical", "Diseases", "Health"],
     download: {
-      csv: "assets/mca_companies.csv",
-      pdf: "assets/mca_companies.pdf",
-      json: "assets/mca_companies.json"
+      csv: "assets/diseases.csv",
+      pdf: "assets/diseases.pdf",
+      json: "assets/diseases.json"
     },
     related: [
-      { name: "Company Directors Registry", id: "company-directors-registry" },
-      { name: "GSTIN Registry", id: "gstin-registry" },
-      { name: "Startup India Certified Entities", id: "startup-india-entities" }
+      { name: "Disease-wise Cases and Death reported under IDSP", id: "https://dataful.in/datasets/18514/" },
     ],
     schema: [
-      { name: "Company Name", type: "STRING", primary: false, desc: "The official registered name of the corporate entity.", sample: '"Tata Consultancy Services Limited"' },
-      { name: "CIN", type: "STRING", primary: true, desc: "Corporate Identification Number. Unique 21-character alphanumeric identifier.", sample: '"L74140MH1995PLC090110"' },
-      { name: "Registration Date", type: "DATE", primary: false, desc: "The date when the entity was officially incorporated.", sample: '"1995-07-15"' },
-      { name: "Authorized Capital", type: "INTEGER", primary: false, desc: "Maximum capital amount in INR the company can raise via share issuance.", sample: "3,750,000,000" },
-      { name: "Paid Up Capital", type: "INTEGER", primary: false, desc: "Actual capital in INR contributed by shareholders.", sample: "3,661,400,000" },
-      { name: "Company Status", type: "STRING", primary: false, desc: "Current status of the company (e.g. Active, Strike Off, Amalgamated).", sample: '"Active"' },
-      { name: "State", type: "STRING", primary: false, desc: "Indian state in which the company's registered office is situated.", sample: '"Maharashtra"' }
+      { name: "disease_illness_name", type: "STRING", primary: true, desc: "Original disease or illness name as reported.", sample: '"Acute Diarrheal Disease"' },
+      { name: "standard", type: "STRING", primary: false, desc: "Standardized disease name for consistent reporting.", sample: '"Acute Diarrheal Disease"' }
     ],
-    previewHeaders: ["Company Name", "CIN", "Registration Date", "Company Status", "State"],
+    previewHeaders: ["disease_illness_name", "standard"],
     preview: [
-      { "Company Name": "Tata Consultancy Services Limited", "CIN": "L74140MH1995PLC090110", "Registration Date": "1995-07-15", "Company Status": "Active", "State": "Maharashtra" },
-      { "Company Name": "Infosys Limited", "CIN": "L85110KA1981PLC013115", "Registration Date": "1981-07-02", "Company Status": "Active", "State": "Karnataka" },
-      { "Company Name": "Reliance Industries Limited", "CIN": "L17110MH1973PLC019786", "Registration Date": "1973-05-08", "Company Status": "Active", "State": "Maharashtra" },
-      { "Company Name": "HDFC Bank Limited", "CIN": "L65920MH1994PLC080618", "Registration Date": "1994-08-30", "Company Status": "Active", "State": "Maharashtra" },
-      { "Company Name": "ICICI Bank Limited", "CIN": "L65190GJ1994PLC021012", "Registration Date": "1994-01-05", "Company Status": "Active", "State": "Gujarat" },
-      { "Company Name": "Wipro Limited", "CIN": "L32102KA1945PLC020800", "Registration Date": "1945-12-29", "Company Status": "Active", "State": "Karnataka" },
-      { "Company Name": "Bharti Airtel Limited", "CIN": "L74899HR1995PLC095960", "Registration Date": "1995-07-07", "Company Status": "Active", "State": "Haryana" },
-      { "Company Name": "Larsen & Toubro Limited", "CIN": "L99999MH1946PLC004768", "Registration Date": "1946-02-07", "Company Status": "Active", "State": "Maharashtra" },
-      { "Company Name": "State Bank of India", "CIN": "State Owned Corp", "Registration Date": "1955-07-01", "Company Status": "Active", "State": "Maharashtra" },
-      { "Company Name": "Hindustan Unilever Limited", "CIN": "L15140MH1933PLC002030", "Registration Date": "1933-10-17", "Company Status": "Active", "State": "Maharashtra" }
+      { "disease_illness_name": "Acute Diarrheal Disease", "standard": "Acute Diarrheal Disease" },
+      { "disease_illness_name": "Malaria", "standard": "Malaria" }
     ],
     pythonCode: `import pandas as pd
 
-url = "https://raw.githubusercontent.com/saisantoshv3/electoral_bonds/main/mca_companies.csv"
+url = "https://raw.githubusercontent.com/saisantoshv3/india-data-schema/main/assets/diseases.csv"
 df = pd.read_csv(url)
 
-# Print company name and status
-print(df[['Company Name', 'Company Status']].head())`,
-    curlCode: `curl -X GET "https://raw.githubusercontent.com/saisantoshv3/electoral_bonds/main/mca_companies.json" \\
+# Display unique diseases
+print(df['standard'].unique()[:10])`,
+    curlCode: `curl -X GET "https://raw.githubusercontent.com/saisantoshv3/india-data-schema/main/assets/diseases.json" \\
      -H "Accept: application/json"`
   },
   {
-    id: "airline-codes",
-    name: "Airline Codes",
+    id: "airline-names",
+    name: "Airline Names",
     category: "Transport",
     icon: "flight",
-    description: "IATA and ICAO airline codes including carrier names, callsigns, and country of origin for global aviation entities.",
-    rows: "9k rows",
-    updated: "Current",
+    description: "Comprehensive registry of airline names with standardized naming conventions for consistent identification across India's aviation and transportation data systems.",
     tags: ["IATA", "Aviation", "Transport", "Global"],
     download: {
-      csv: "assets/airline_codes.csv",
-      pdf: "assets/airline_codes.pdf",
-      json: "assets/airline_codes.json"
+      csv: "assets/airlines_names.csv",
+      pdf: "assets/airlines_names.pdf",
+      json: "assets/airlines_names.json"
     },
     related: [
-      { name: "Airport Directory", id: "airport-directory" },
-      { name: "Flight Schedules Database", id: "flight-schedules" },
-      { name: "Airspace Sector Boundaries", id: "airspace-sector-boundaries" }
+      { name: "DGCA : Airline Wise Data", id: "https://dataful.in/collections/?q=airline%20wise" },
+      
     ],
     schema: [
-      { name: "Airline Name", type: "STRING", primary: false, desc: "The official name of the airline company.", sample: '"Air India"' },
-      { name: "IATA Code", type: "STRING", primary: false, desc: "2-character IATA carrier code.", sample: '"AI"' },
-      { name: "ICAO Code", type: "STRING", primary: true, desc: "3-character ICAO code. Unique identifier.", sample: '"AIC"' },
-      { name: "Callsign", type: "STRING", primary: false, desc: "Official radiotelephony callsign.", sample: '"AIRINDIA"' },
-      { name: "Country", type: "STRING", primary: false, desc: "Country of registration/base of operations.", sample: '"India"' },
-      { name: "Active", type: "BOOLEAN", primary: false, desc: "Indicates whether the airline is currently operational.", sample: "true" }
+      { name: "airline", type: "STRING", primary: true, desc: "The common name of the airline.", sample: '"Air India"' },
+      { name: "standard_airline", type: "STRING", primary: false, desc: "The official standardized name of the airline company.", sample: '"Air India Limited"' },
+      { name: "notes", type: "STRING", primary: false, desc: "Additional notes or remarks about the airline.", sample: '""' }
     ],
-    previewHeaders: ["Airline Name", "IATA Code", "ICAO Code", "Callsign", "Country", "Active"],
+    previewHeaders: ["airline", "standard_airline", "notes"],
     preview: [
-      { "Airline Name": "Air India", "IATA Code": "AI", "ICAO Code": "AIC", "Callsign": "AIRINDIA", "Country": "India", "Active": true },
-      { "Airline Name": "IndiGo", "IATA Code": "6E", "ICAO Code": "IGO", "Callsign": "IFLY", "Country": "India", "Active": true },
-      { "Airline Name": "SpiceJet", "IATA Code": "SG", "ICAO Code": "SEJ", "Callsign": "SPICEJET", "Country": "India", "Active": true },
-      { "Airline Name": "Vistara", "IATA Code": "UK", "ICAO Code": "VTI", "Callsign": "VISTARA", "Country": "India", "Active": true },
-      { "Airline Name": "Akasa Air", "IATA Code": "QP", "ICAO Code": "AKP", "Callsign": "AKASA", "Country": "India", "Active": true },
-      { "Airline Name": "British Airways", "IATA Code": "BA", "ICAO Code": "BAW", "Callsign": "SPEEDBIRD", "Country": "United Kingdom", "Active": true },
-      { "Airline Name": "Emirates", "IATA Code": "EK", "ICAO Code": "UAE", "Callsign": "EMIRATES", "Country": "United Arab Emirates", "Active": true },
-      { "Airline Name": "Lufthansa", "IATA Code": "LH", "ICAO Code": "DLH", "Callsign": "LUFTHANSA", "Country": "Germany", "Active": true },
-      { "Airline Name": "Singapore Airlines", "IATA Code": "SQ", "ICAO Code": "SIA", "Callsign": "SINGAPORE", "Country": "Singapore", "Active": true },
-      { "Airline Name": "Qatar Airways", "IATA Code": "QR", "ICAO Code": "QTR", "Callsign": "QATARI", "Country": "Qatar", "Active": true }
+      { "airline": "Air India", "standard_airline": "Air India Limited", "notes": "" },
+      { "airline": "IndiGo", "standard_airline": "InterGlobe Aviation Limited", "notes": "" }
     ],
     pythonCode: `import pandas as pd
 
