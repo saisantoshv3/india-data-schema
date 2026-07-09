@@ -7,7 +7,10 @@
     
     <!-- Tailwind CSS with Forms and Container Queries -->
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-    
+
+    <!-- Papa Parse for CSV parsing -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+
     <!-- Google Fonts: Playfair Display, Roboto, Montserrat -->
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;700&family=Roboto:wght@400;500;700&family=Montserrat:wght@400;500;700&display=swap" rel="stylesheet">
     
@@ -136,11 +139,18 @@
     <header class="bg-surface-container-lowest dark:bg-[#1c1c1e] border-b border-outline-variant dark:border-[#2d2d30] sticky top-0 z-50 transition-colors">
         <div class="flex justify-between items-center w-full px-lg py-sm max-w-container-max mx-auto">
             <div class="flex items-center gap-xl">
-                <a href="#/" class="flex items-center gap-sm font-display text-title-lg font-bold text-on-surface dark:text-[#f3f0ef] hover:opacity-90">
-                    <span class="material-symbols-outlined text-primary dark:text-[#ffb1c2] text-[28px]">database</span>
-                    <span>India Data Schema</span>
-                </a>
-                
+                <div class="flex items-center gap-md">
+                    <a href="#/" class="flex items-center gap-sm font-display text-[28px] font-bold text-on-surface dark:text-[#f3f0ef] hover:opacity-90">
+                        <span class="material-symbols-outlined text-primary dark:text-[#ffb1c2] text-[32px]">database</span>
+                        <span>India Data Schema</span>
+                    </a>
+                    <!-- Powered by Dataful -->
+                    <a class="flex items-center gap-xs text-sm text-on-surface-variant hover:opacity-80 transition-opacity border-l border-outline-variant dark:border-[#2d2d30] pl-md" href="https://dataful.in/" target="_blank">
+                        <span class="opacity-70 dark:text-gray-300">Powered by</span>
+                        <img alt="Dataful Logo" class="h-4 w-auto dark:invert dark:brightness-200" src="https://dataful.in/_next/image/?url=%2F_next%2Fstatic%2Fmedia%2Flogo.5abd4ad9.png&w=3840&q=75">
+                    </a>
+                </div>
+
                 <!-- Global Search Bar in Header -->
                 <div class="hidden md:flex items-center bg-surface-container dark:bg-[#2c2c2e] rounded-lg px-md py-xs border border-outline-variant dark:border-transparent focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20 focus-within:bg-surface-container-lowest dark:focus-within:bg-[#1c1c1e] transition-all w-80">
                     <span class="material-symbols-outlined text-on-surface-variant dark:text-gray-400 mr-sm">search</span>
@@ -221,8 +231,8 @@
                 </div>
 
                 <div class="mt-xl text-center">
-                    <button class="bg-surface-container-high dark:bg-[#2c2c2e] text-on-surface dark:text-[#f3f0ef] px-xl py-md rounded font-label text-label-md hover:bg-surface-dim dark:hover:bg-[#3c3c3e] transition-colors border border-outline-variant dark:border-[#2d2d30]">
-                        View All 512 Datasets
+                    <button onclick="clearAllFilters()" class="bg-surface-container-high dark:bg-[#2c2c2e] text-on-surface dark:text-[#f3f0ef] px-xl py-md rounded font-label text-label-md hover:bg-surface-dim dark:hover:bg-[#3c3c3e] transition-colors border border-outline-variant dark:border-[#2d2d30]">
+                        View All Datasets
                     </button>
                 </div>
             </section>
@@ -306,9 +316,9 @@
                             </div>
                             
                             <div class="overflow-x-auto">
-                                <table class="w-full text-left border-collapse text-body-md font-body">
+                                <table class="w-full text-left border-collapse font-body" style="font-size: 0.9rem;">
                                     <thead>
-                                        <tr class="bg-surface-container-low dark:bg-[#2c2c2e] text-on-surface-variant dark:text-gray-300 font-label text-label-sm border-b border-outline-variant dark:border-[#2d2d30]" id="detail-preview-thead">
+                                        <tr class="bg-surface-container-low dark:bg-[#2c2c2e] text-on-surface-variant dark:text-gray-300 font-label border-b border-outline-variant dark:border-[#2d2d30]" id="detail-preview-thead" style="font-size: 0.85rem;">
                                             <!-- Headers loaded dynamically -->
                                         </tr>
                                     </thead>
@@ -434,13 +444,6 @@ git push origin main</code></pre>
                 <span class="font-label text-label-sm text-on-surface-variant dark:text-gray-400">
                     &copy; 2026 India Data Dictionary. Released under MIT License.
                 </span>
-                
-                <!-- Dataful Branding Link -->
-                <a class="flex items-center gap-xs text-label-sm text-on-surface-variant hover:opacity-80 transition-opacity ml-md md:ml-0 md:border-l md:border-outline-variant md:pl-md" href="https://dataful.in/" target="_blank">
-                    <span class="opacity-70 dark:text-gray-300">Powered by</span>
-                    <!-- Dataful transparent white/dark logo styled for darkmode support -->
-                    <img alt="Dataful Logo" class="h-4 w-auto dark:invert dark:brightness-200" src="https://dataful.in/_next/image/?url=%2F_next%2Fstatic%2Fmedia%2Flogo.5abd4ad9.png&w=3840&q=75">
-                </a>
             </div>
             
             <nav class="flex items-center gap-lg font-label text-label-sm">
@@ -479,15 +482,141 @@ git push origin main</code></pre>
         let currentCategory = 'all';
         let searchKeyword = '';
 
+        // CSV data cache
+        let csvDataCache = {};
+        let currentDatasetCSV = {
+            data: [],
+            currentIndex: 0,
+            batchSize: 10
+        };
+        let datasetMetadata = {}; // Store row counts and last updated info
+
+        // Load CSV metadata (row count only) - lighter weight
+        async function loadCSVMetadata(csvUrl, datasetId) {
+            if (datasetMetadata[datasetId]) {
+                return datasetMetadata[datasetId];
+            }
+
+            try {
+                const response = await fetch(csvUrl, { method: 'HEAD' });
+                const lastModified = response.headers.get('Last-Modified');
+
+                // Now fetch and count rows
+                const dataResponse = await fetch(csvUrl);
+                const csvText = await dataResponse.text();
+                const lines = csvText.split('\n').filter(line => line.trim() !== '');
+                const rowCount = Math.max(0, lines.length - 1); // Subtract header row
+
+                datasetMetadata[datasetId] = {
+                    rowCount: rowCount,
+                    lastModified: lastModified ? new Date(lastModified) : new Date()
+                };
+
+                return datasetMetadata[datasetId];
+            } catch (error) {
+                console.error('Error loading CSV metadata:', error);
+                return null;
+            }
+        }
+
+        // Load CSV file and parse it
+        async function loadCSVData(csvUrl, datasetId) {
+            if (csvDataCache[datasetId]) {
+                return csvDataCache[datasetId];
+            }
+
+            try {
+                const response = await fetch(csvUrl);
+                const csvText = await response.text();
+
+                return new Promise((resolve, reject) => {
+                    Papa.parse(csvText, {
+                        header: true,
+                        skipEmptyLines: true,
+                        dynamicTyping: true,
+                        complete: function(results) {
+                            csvDataCache[datasetId] = {
+                                data: results.data,
+                                headers: results.meta.fields,
+                                rowCount: results.data.length
+                            };
+                            resolve(csvDataCache[datasetId]);
+                        },
+                        error: function(error) {
+                            console.error('CSV parsing error:', error);
+                            reject(error);
+                        }
+                    });
+                });
+            } catch (error) {
+                console.error('Error loading CSV:', error);
+                return null;
+            }
+        }
+
+        // Format row count for display
+        function formatRowCount(count) {
+            if (count >= 1000000) {
+                return (count / 1000000).toFixed(1) + 'M rows';
+            } else if (count >= 1000) {
+                return (count / 1000).toFixed(1) + 'k rows';
+            } else {
+                return count + ' rows';
+            }
+        }
+
+        // Format date as readable string
+        function getRelativeTime(date) {
+            const options = { year: 'numeric', month: 'short', day: 'numeric' };
+            return date.toLocaleDateString('en-US', options);
+        }
+
+        // Show download notification
+        function showDownloadNotification(filename) {
+            // Create toast notification
+            const toast = document.createElement('div');
+            toast.className = 'fixed bottom-4 right-4 bg-primary dark:bg-[#ffb1c2] text-on-primary dark:text-[#3f0019] px-lg py-md rounded-lg shadow-lg flex items-center gap-sm z-50 animate-fade-in';
+            toast.innerHTML = `
+                <span class="material-symbols-outlined">check_circle</span>
+                <span class="font-label text-label-md font-medium">${filename} downloaded successfully!</span>
+            `;
+            document.body.appendChild(toast);
+
+            // Remove after 3 seconds
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transition = 'opacity 0.3s';
+                setTimeout(() => document.body.removeChild(toast), 300);
+            }, 3000);
+        }
+
+        // Force download file (CSV, PDF, etc)
+        function downloadFile(url, filename) {
+            console.log('Downloading:', url, 'as', filename);
+
+            // Create a temporary link and trigger download
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = filename;
+            link.style.display = 'none';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+
+            // Show success notification
+            showDownloadNotification(filename);
+        }
+
         // Dynamic Router
-        function handleRoute() {
+        async function handleRoute() {
             const hash = window.location.hash || '#/';
-            
+            console.log('handleRoute called, hash:', hash);
+
             // Hide all pages
             document.getElementById('home-view').classList.add('hidden');
             document.getElementById('detail-view').classList.add('hidden');
             document.getElementById('docs-view').classList.add('hidden');
-            
+
             // Sync search inputs
             const headerSearch = document.getElementById('header-search');
             if (hash !== '#/' && hash !== '#/home' && hash !== '') {
@@ -510,7 +639,7 @@ git push origin main</code></pre>
                 const id = hash.replace('#/dataset/', '');
                 const dataset = DATASETS.find(d => d.id === id);
                 if (dataset) {
-                    renderDetail(dataset);
+                    await renderDetail(dataset);
                     document.getElementById('detail-view').classList.remove('hidden');
                     document.getElementById('detail-view').classList.add('animate-fade-in');
                 } else {
@@ -526,10 +655,12 @@ git push origin main</code></pre>
 
         // Render Home View Catalog
         function renderHome() {
+            console.log('renderHome called');
             // Render Category Filter Chips
             const filterContainer = document.getElementById('category-filters');
             const categories = ['all', ...new Set(DATASETS.map(d => d.category.toLowerCase()))];
-            
+            console.log('Categories:', categories);
+
             filterContainer.innerHTML = categories.map(cat => {
                 const label = cat.charAt(0).toUpperCase() + cat.slice(1);
                 const isActive = currentCategory === cat;
@@ -599,7 +730,13 @@ git push origin main</code></pre>
                 noResults.classList.remove('hidden');
             } else {
                 noResults.classList.add('hidden');
-                grid.innerHTML = filtered.map(d => `
+                grid.innerHTML = filtered.map(d => {
+                    // Get metadata if available
+                    const metadata = datasetMetadata[d.id];
+                    const rowCount = metadata ? formatRowCount(metadata.rowCount) : (d.rows || 'Loading...');
+                    const lastUpdated = metadata ? getRelativeTime(metadata.lastModified) : (d.updated || 'Unknown');
+
+                    return `
                     <div onclick="navigateToDataset('${d.id}')" class="bg-surface-container-lowest dark:bg-[#1c1c1e] border border-outline-variant dark:border-[#2d2d30] rounded-xl flex flex-col hover:border-primary dark:hover:border-[#ffb1c2] transition-all group cursor-pointer shadow-sm">
                         <div class="p-lg border-b border-outline-variant dark:border-[#2d2d30] bg-surface-container-low/30 dark:bg-[#202022] rounded-t-xl">
                             <div class="flex justify-between items-start mb-sm">
@@ -615,11 +752,11 @@ git push origin main</code></pre>
                             <div class="flex items-center gap-md mb-md">
                                 <div class="flex items-center gap-xs">
                                     <span class="material-symbols-outlined text-on-surface-variant dark:text-gray-400 text-body-md">list_alt</span>
-                                    <span class="text-label-sm font-label text-on-surface dark:text-[#f3f0ef]">${d.rows}</span>
+                                    <span class="text-label-sm font-label text-on-surface dark:text-[#f3f0ef]">${rowCount}</span>
                                 </div>
                                 <div class="flex items-center gap-xs">
                                     <span class="material-symbols-outlined text-on-surface-variant dark:text-gray-400 text-body-md">update</span>
-                                    <span class="text-label-sm font-label text-on-surface dark:text-[#f3f0ef]">${d.updated}</span>
+                                    <span class="text-label-sm font-label text-on-surface dark:text-[#f3f0ef]">${lastUpdated}</span>
                                 </div>
                             </div>
                             <div class="flex flex-wrap gap-xs">
@@ -631,7 +768,8 @@ git push origin main</code></pre>
                             <span class="material-symbols-outlined text-outline dark:text-gray-400 group-hover:translate-x-1 transition-transform">arrow_forward</span>
                         </div>
                     </div>
-                `).join('');
+                `;
+                }).join('');
             }
         }
 
@@ -649,7 +787,7 @@ git push origin main</code></pre>
         }
 
         // Render Dataset Detailed Page
-        function renderDetail(dataset) {
+        async function renderDetail(dataset) {
             // Set Breadcrumbs
             document.getElementById('detail-breadcrumb-category').textContent = dataset.category;
             document.getElementById('detail-breadcrumb-name').textContent = dataset.name;
@@ -658,6 +796,22 @@ git push origin main</code></pre>
             document.getElementById('detail-title').textContent = dataset.name;
             document.getElementById('detail-description').textContent = dataset.description;
             document.getElementById('detail-schema-count').textContent = `${dataset.schema.length} Fields Defined`;
+
+            // Load CSV data
+            console.log('Loading CSV data from:', dataset.download.csv);
+            const csvData = await loadCSVData(dataset.download.csv, dataset.id);
+            if (csvData && csvData.data && csvData.data.length > 0) {
+                console.log('CSV data loaded successfully:', csvData.rowCount, 'rows');
+                currentDatasetCSV.data = csvData.data;
+                currentDatasetCSV.currentIndex = 0;
+                currentDatasetCSV.headers = csvData.headers;
+            } else {
+                console.log('Falling back to hardcoded preview data');
+                // Fallback to hardcoded preview data
+                currentDatasetCSV.data = dataset.preview || [];
+                currentDatasetCSV.currentIndex = 0;
+                currentDatasetCSV.headers = dataset.previewHeaders || [];
+            }
 
             // Render Related Datasets sidebar
             const relatedList = document.getElementById('related-datasets-list');
@@ -680,21 +834,24 @@ git push origin main</code></pre>
 
             // Render Download Center sidebar buttons
             const downloadContainer = document.getElementById('download-center-buttons');
+            const csvFilename = dataset.download.csv.split('/').pop();
+            const pdfFilename = dataset.download.pdf.split('/').pop();
+
             downloadContainer.innerHTML = `
-                <a href="${dataset.download.csv}" download target="_blank" class="flex items-center justify-between px-md py-sm border border-outline-variant dark:border-[#2d2d30] rounded-lg hover:border-primary dark:hover:border-[#ffb1c2] hover:bg-primary/5 dark:hover:bg-[#ffb1c2]/5 transition-all group bg-surface-container-lowest dark:bg-[#18181a]">
+                <button onclick="downloadFile('${dataset.download.csv}', '${csvFilename}')" class="flex items-center justify-between px-md py-sm border border-outline-variant dark:border-[#2d2d30] rounded-lg hover:border-primary dark:hover:border-[#ffb1c2] hover:bg-primary/5 dark:hover:bg-[#ffb1c2]/5 transition-all group bg-surface-container-lowest dark:bg-[#18181a] w-full cursor-pointer">
                     <span class="flex items-center gap-sm">
                         <span class="material-symbols-outlined text-secondary dark:text-gray-300">description</span>
-                        <span class="font-label text-label-md text-on-surface dark:text-[#f3f0ef] font-medium">Download .CSV</span>
+                        <span class="font-label text-label-md text-on-surface dark:text-[#f3f0ef] font-medium">Download CSV</span>
                     </span>
                     <span class="material-symbols-outlined text-outline dark:text-gray-400 group-hover:text-primary dark:group-hover:text-[#ffb1c2] group-hover:scale-105 transition-all">download</span>
-                </a>
-                <a href="${dataset.download.pdf}" download target="_blank" class="flex items-center justify-between px-md py-sm border border-outline-variant dark:border-[#2d2d30] rounded-lg hover:border-primary dark:hover:border-[#ffb1c2] hover:bg-primary/5 dark:hover:bg-[#ffb1c2]/5 transition-all group bg-surface-container-lowest dark:bg-[#18181a]">
+                </button>
+                <button onclick="downloadFile('${dataset.download.pdf}', '${pdfFilename}')" class="flex items-center justify-between px-md py-sm border border-outline-variant dark:border-[#2d2d30] rounded-lg hover:border-primary dark:hover:border-[#ffb1c2] hover:bg-primary/5 dark:hover:bg-[#ffb1c2]/5 transition-all group bg-surface-container-lowest dark:bg-[#18181a] w-full cursor-pointer">
                     <span class="flex items-center gap-sm">
                         <span class="material-symbols-outlined text-secondary dark:text-gray-300">picture_as_pdf</span>
                         <span class="font-label text-label-md text-on-surface dark:text-[#f3f0ef] font-medium">Data Dictionary (PDF)</span>
                     </span>
                     <span class="material-symbols-outlined text-outline dark:text-gray-400 group-hover:text-primary dark:group-hover:text-[#ffb1c2] group-hover:scale-105 transition-all">download</span>
-                </a>
+                </button>
             `;
 
             // Render Schema Definition Table
@@ -717,32 +874,74 @@ git push origin main</code></pre>
             document.getElementById('preview-search').value = '';
 
             // Setup Data Preview Tab contents
-            renderDetailPreviewTable(dataset);
+            await renderDetailPreviewTable(dataset);
 
         }
 
         // Render preview table content
-        function renderDetailPreviewTable(dataset, filterStr = '') {
+        function renderDetailPreviewTable(dataset, filterStr = '', append = false) {
             const thead = document.getElementById('detail-preview-thead');
             const tbody = document.getElementById('detail-preview-tbody');
-            
-            // Build the Headers
-            thead.innerHTML = dataset.previewHeaders.map(h => `<th class="px-md py-sm border-b border-outline-variant dark:border-[#2d2d30] font-medium">${h}</th>`).join('');
 
-            // Build Rows
-            const filteredRows = dataset.preview.filter(row => {
-                if (!filterStr) return true;
-                return Object.values(row).some(val => String(val).toLowerCase().includes(filterStr));
-            });
+            // Use CSV data if available, otherwise fall back to hardcoded preview
+            const headers = currentDatasetCSV.headers || dataset.previewHeaders || [];
+            const allData = (currentDatasetCSV.data && currentDatasetCSV.data.length > 0) ? currentDatasetCSV.data : (dataset.preview || []);
 
-            if (filteredRows.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="${dataset.previewHeaders.length}" class="px-md py-xl text-center text-on-surface-variant dark:text-gray-400 italic">No matching records found.</td></tr>`;
+            console.log('Rendering preview table:', headers.length, 'headers,', allData.length, 'rows');
+
+            // Build the Headers (only once)
+            if (!append) {
+                thead.innerHTML = headers.map(h => `<th class="px-md py-sm border-b border-outline-variant dark:border-[#2d2d30] font-medium">${h}</th>`).join('');
+            }
+
+            // Filter rows if search string provided
+            let dataToShow = allData;
+            if (filterStr) {
+                dataToShow = allData.filter(row => {
+                    return Object.values(row).some(val => String(val).toLowerCase().includes(filterStr));
+                });
+                currentDatasetCSV.currentIndex = 0; // Reset pagination on search
+            }
+
+            // Get the batch of rows to display (max 30 total)
+            const maxRecords = 30;
+            const startIndex = append ? currentDatasetCSV.currentIndex : 0;
+            const endIndex = Math.min(startIndex + currentDatasetCSV.batchSize, maxRecords);
+            const rowsToShow = dataToShow.slice(startIndex, endIndex);
+
+            if (!append) {
+                currentDatasetCSV.currentIndex = rowsToShow.length;
             } else {
-                tbody.innerHTML = filteredRows.map(row => `
+                currentDatasetCSV.currentIndex += rowsToShow.length;
+            }
+
+            if (rowsToShow.length === 0 && !append) {
+                tbody.innerHTML = `<tr><td colspan="${headers.length}" class="px-md py-xl text-center text-on-surface-variant dark:text-gray-400 italic">No matching records found.</td></tr>`;
+            } else {
+                const rowsHtml = rowsToShow.map(row => `
                     <tr class="hover:bg-surface-container/50 dark:hover:bg-[#2c2c2e]/50 transition-colors">
-                        ${dataset.previewHeaders.map(h => `<td class="px-md py-sm">${row[h] !== undefined ? row[h] : '-'}</td>`).join('')}
+                        ${headers.map(h => `<td class="px-md py-sm">${row[h] !== undefined && row[h] !== null ? row[h] : '-'}</td>`).join('')}
                     </tr>
                 `).join('');
+
+                if (append) {
+                    tbody.innerHTML += rowsHtml;
+                } else {
+                    tbody.innerHTML = rowsHtml;
+                }
+            }
+
+            // Update the "Stream more records" button visibility (hide after 30 records)
+            const hasMore = currentDatasetCSV.currentIndex < Math.min(dataToShow.length, maxRecords);
+            const loadMoreBtn = document.querySelector('#preview-actions button');
+            if (loadMoreBtn) {
+                if (hasMore) {
+                    loadMoreBtn.style.display = 'flex';
+                    const remaining = Math.min(dataToShow.length, maxRecords);
+                    loadMoreBtn.querySelector('span:last-child').textContent = `Load more records (${currentDatasetCSV.currentIndex}/${remaining})`;
+                } else {
+                    loadMoreBtn.style.display = 'none';
+                }
             }
         }
 
@@ -755,20 +954,34 @@ git push origin main</code></pre>
             if (!dataset) return;
 
             const filterStr = document.getElementById('preview-search').value.trim().toLowerCase();
-            renderDetailPreviewTable(dataset, filterStr);
+            currentDatasetCSV.currentIndex = 0; // Reset pagination
+            renderDetailPreviewTable(dataset, filterStr, false);
         }
 
-        // Simulate streaming more records
+        // Load more records from CSV
         function simulateLoadMore() {
+            const activeHash = window.location.hash;
+            if (!activeHash.startsWith('#/dataset/')) return;
+
+            const id = activeHash.replace('#/dataset/', '');
+            const dataset = DATASETS.find(d => d.id === id);
+            if (!dataset) return;
+
             const toast = document.getElementById('toast-message');
             toast.classList.remove('hidden');
+            toast.textContent = "Fetching more records...";
+
             setTimeout(() => {
-                toast.textContent = "Data feed active. 100 fresh records fetched and appended successfully.";
+                const filterStr = document.getElementById('preview-search').value.trim().toLowerCase();
+                renderDetailPreviewTable(dataset, filterStr, true);
+
+                const recordsLoaded = Math.min(currentDatasetCSV.batchSize, currentDatasetCSV.data.length - (currentDatasetCSV.currentIndex - currentDatasetCSV.batchSize));
+                toast.textContent = `${recordsLoaded} more records loaded successfully.`;
+
                 setTimeout(() => {
                     toast.classList.add('hidden');
-                    toast.textContent = "Connected to endpoint. Fetching chunk from Parquet storage stream...";
-                }, 3000);
-            }, 1500);
+                }, 2000);
+            }, 800);
         }
 
 
@@ -825,11 +1038,36 @@ git push origin main</code></pre>
             });
         }
 
+        // Load metadata for all datasets in the background
+        async function preloadDatasetMetadata() {
+            for (const dataset of DATASETS) {
+                try {
+                    await loadCSVMetadata(dataset.download.csv, dataset.id);
+                } catch (error) {
+                    console.warn(`Failed to load metadata for ${dataset.id}:`, error);
+                }
+            }
+            // Re-render the home page if we're on it to show updated counts
+            if (window.location.hash === '#/' || window.location.hash === '#/home' || window.location.hash === '') {
+                filterAndRenderDatasets();
+            }
+        }
+
+        // Debug: Log when page loads
+        console.log('Script loaded, waiting for page load...');
+
         // Routing listeners
         window.addEventListener('hashchange', handleRoute);
         window.addEventListener('load', () => {
+            console.log('Page loaded! Starting initialization...');
+            console.log('DATASETS array:', typeof DATASETS !== 'undefined' ? DATASETS.length + ' datasets' : 'NOT LOADED');
             initTheme();
+            console.log('Theme initialized');
             handleRoute();
+            console.log('Route handled');
+            // Load metadata in background
+            preloadDatasetMetadata();
+            console.log('Metadata preload started');
         });
     </script>
 </body>
