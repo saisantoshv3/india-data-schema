@@ -10,7 +10,8 @@ const DATASETS = [
     download: {
       csv: "assets/mca_companies.csv",
       pdf: "assets/mca_companies.pdf",
-      json: "assets/mca_companies.json"
+      json: "assets/mca_companies.json",
+      docx: "assets/CSR.docx"
     },
     //create hyperlinks for below
     related: [
@@ -87,11 +88,12 @@ print(df['standard'].unique()[:10])`,
     download: {
       csv: "assets/airlines_names.csv",
       pdf: "assets/airlines_names.pdf",
-      json: "assets/airlines_names.json"
+      json: "assets/airlines_names.json",
+      docx: "assets/DGCA Draft.docx"
     },
     related: [
       { name: "DGCA : Airline Wise Data", id: "https://dataful.in/collections/?q=airline%20wise" },
-      
+
     ],
     schema: [
       { name: "airline", type: "STRING", primary: true, desc: "The common name of the airline.", sample: '"Air India"' },

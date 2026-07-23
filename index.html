@@ -11,6 +11,9 @@
     <!-- Papa Parse for CSV parsing -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
 
+    <!-- JSZip for parsing DOCX files client-side -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+
     <!-- Google Fonts: Playfair Display, Roboto, Montserrat -->
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;700&family=Roboto:wght@400;500;700&family=Montserrat:wght@400;500;700&display=swap" rel="stylesheet">
     
@@ -128,6 +131,55 @@
         
         .hide-scrollbar::-webkit-scrollbar { display: none; }
         .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        /* Source Document (DOCX) rendered content */
+        .docx-content .docx-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin: 0 0 0.75rem;
+        }
+        .docx-content .docx-heading {
+            font-family: 'Playfair Display', serif;
+            font-weight: 700;
+            margin: 1.25rem 0 0.5rem;
+        }
+        .docx-content .docx-bold {
+            font-weight: 700;
+            margin: 1.1rem 0 0.35rem;
+        }
+        .docx-content .docx-p {
+            margin: 0 0 0.85rem;
+            line-height: 1.75;
+            opacity: 0.9;
+        }
+        .docx-content .docx-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+            font-size: 0.875rem;
+        }
+        .docx-content .docx-td {
+            border: 1px solid #dfbec4;
+            padding: 0.5rem;
+            vertical-align: top;
+        }
+        .dark .docx-content .docx-td {
+            border-color: #2d2d30;
+        }
+        .docx-content .docx-image-wrap {
+            margin: 1rem 0;
+        }
+        .docx-content .docx-img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 0.5rem;
+            border: 1px solid #dfbec4;
+            display: block;
+        }
+        .dark .docx-content .docx-img {
+            border-color: #2d2d30;
+        }
     </style>
     
     <!-- Load Dataset Registry configuration -->
@@ -279,13 +331,30 @@
                         </p>
                     </div>
 
+                    <!-- Source Document Viewer (rendered live from the DOCX/PDF source file) -->
+                    <div id="document-content-card" class="hidden bg-surface-container-lowest dark:bg-[#1c1c1e] border border-outline-variant dark:border-[#2d2d30] rounded-lg overflow-hidden shadow-sm transition-colors">
+                        <button type="button" onclick="toggleCollapse('document')" class="w-full p-md border-b border-outline-variant dark:border-[#2d2d30] flex justify-between items-center bg-surface-container-low dark:bg-[#18181a] transition-colors text-left cursor-pointer hover:bg-surface-container dark:hover:bg-[#202022]">
+                            <span class="flex items-center gap-sm">
+                                <span class="material-symbols-outlined text-primary dark:text-[#ffb1c2]">article</span>
+                                <h2 class="font-display text-title-lg font-bold text-on-surface dark:text-[#f3f0ef]">Data Documentation</h2>
+                            </span>
+                            <span id="document-chevron" class="material-symbols-outlined text-on-surface-variant dark:text-gray-400">expand_less</span>
+                        </button>
+                        <div id="document-body" class="p-lg max-h-[36rem] overflow-y-auto">
+                            <div id="document-content-inner" class="docx-content font-body text-on-surface dark:text-[#f3f0ef]"></div>
+                        </div>
+                    </div>
+
                     <!-- Interactive Schema Table -->
                     <div class="bg-surface-container-lowest dark:bg-[#1c1c1e] border border-outline-variant dark:border-[#2d2d30] rounded-lg overflow-hidden shadow-sm transition-colors">
-                        <div class="p-md border-b border-outline-variant dark:border-[#2d2d30] flex justify-between items-center bg-surface-container-low dark:bg-[#18181a] transition-colors">
+                        <button type="button" onclick="toggleCollapse('schema')" class="w-full p-md border-b border-outline-variant dark:border-[#2d2d30] flex justify-between items-center bg-surface-container-low dark:bg-[#18181a] transition-colors text-left cursor-pointer hover:bg-surface-container dark:hover:bg-[#202022]">
                             <h2 class="font-display text-title-lg font-bold text-on-surface dark:text-[#f3f0ef]">Schema Definition</h2>
-                            <span id="detail-schema-count" class="font-label text-label-sm text-on-surface-variant dark:text-gray-400">4 Fields Defined</span>
-                        </div>
-                        <div class="overflow-x-auto">
+                            <span class="flex items-center gap-sm">
+                                <span id="detail-schema-count" class="font-label text-label-sm text-on-surface-variant dark:text-gray-400">4 Fields Defined</span>
+                                <span id="schema-chevron" class="material-symbols-outlined text-on-surface-variant dark:text-gray-400">expand_less</span>
+                            </span>
+                        </button>
+                        <div id="schema-body" class="overflow-x-auto">
                             <table class="w-full text-left border-collapse font-body">
                                 <thead>
                                     <tr class="bg-surface-container-lowest dark:bg-[#1c1c1e] border-b border-outline-variant dark:border-[#2d2d30] text-on-surface-variant dark:text-gray-400 font-label text-label-sm uppercase tracking-wider">
@@ -304,17 +373,21 @@
 
                     <!-- Data Preview Explorer -->
                     <div class="bg-surface-container-lowest dark:bg-[#1c1c1e] border border-outline-variant dark:border-[#2d2d30] rounded-lg overflow-hidden shadow-sm transition-colors">
+                        <button type="button" onclick="toggleCollapse('preview')" class="w-full p-md border-b border-outline-variant dark:border-[#2d2d30] flex justify-between items-center bg-surface-container-low dark:bg-[#18181a] transition-colors text-left cursor-pointer hover:bg-surface-container dark:hover:bg-[#202022]">
+                            <h3 class="font-display text-title-lg text-on-surface dark:text-[#f3f0ef] font-semibold">Sample Records</h3>
+                            <span id="preview-chevron" class="material-symbols-outlined text-on-surface-variant dark:text-gray-400">expand_less</span>
+                        </button>
                         <!-- Content: Data Preview -->
+                        <div id="preview-body">
                         <div id="detail-content-preview" class="p-md space-y-md">
-                            <div class="flex flex-col sm:flex-row gap-md justify-between sm:items-center">
-                                <h3 class="font-display text-title-lg text-on-surface dark:text-[#f3f0ef] font-semibold">Sample Records</h3>
+                            <div class="flex justify-end">
                                 <!-- Local Preview Table Search -->
                                 <div class="flex items-center bg-surface-container dark:bg-[#2c2c2e] rounded-lg px-md py-xs border border-outline-variant dark:border-[#2d2d30] focus-within:border-primary transition-all w-full sm:w-64">
                                     <span class="material-symbols-outlined text-on-surface-variant dark:text-gray-400 mr-sm">search</span>
                                     <input id="preview-search" oninput="filterPreviewTable()" class="bg-transparent border-none focus:ring-0 text-body-md w-full p-0 text-on-surface dark:text-[#f3f0ef]" placeholder="Filter preview rows..." type="text">
                                 </div>
                             </div>
-                            
+
                             <div class="overflow-x-auto">
                                 <table class="w-full text-left border-collapse font-body" style="font-size: 0.9rem;">
                                     <thead>
@@ -327,7 +400,7 @@
                                     </tbody>
                                 </table>
                             </div>
-                            
+
                             <div class="flex flex-col items-center justify-center pt-md" id="preview-actions">
                                 <button onclick="simulateLoadMore()" class="text-primary dark:text-[#ffb1c2] font-label text-label-md hover:underline flex items-center gap-xs">
                                     <span class="material-symbols-outlined text-[18px]">sync</span>
@@ -337,6 +410,7 @@
                                     Connected to endpoint. Fetching chunk from Parquet storage stream...
                                 </div>
                             </div>
+                        </div>
                         </div>
                     </div>
                 </section>
@@ -607,6 +681,224 @@ git push origin main</code></pre>
             showDownloadNotification(filename);
         }
 
+        // ---- Client-side DOCX rendering (unzips the .docx and reads word/document.xml) ----
+        const WORD_NS = 'http://schemas.openxmlformats.org/wordprocessingml/2006/main';
+        const REL_NS = 'http://schemas.openxmlformats.org/package/2006/relationships';
+        const DRAWING_NS = 'http://schemas.openxmlformats.org/drawingml/2006/main';
+        const R_NS = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships';
+        const VML_NS = 'urn:schemas-microsoft-com:vml';
+        const IMAGE_MIME_TYPES = {
+            png: 'image/png', jpg: 'image/jpeg', jpeg: 'image/jpeg', gif: 'image/gif',
+            bmp: 'image/bmp', svg: 'image/svg+xml', tif: 'image/tiff', tiff: 'image/tiff'
+        };
+        let docxContentCache = {};
+
+        // Build a map of relationship-id -> data: URI for every embedded image in the docx
+        async function buildDocxImageMap(zip) {
+            const map = {};
+            const relsFile = zip.file('word/_rels/document.xml.rels');
+            if (!relsFile) return map;
+
+            const relsXml = await relsFile.async('string');
+            const parser = new DOMParser();
+            const relsDoc = parser.parseFromString(relsXml, 'application/xml');
+            const rels = relsDoc.getElementsByTagNameNS(REL_NS, 'Relationship');
+
+            for (let i = 0; i < rels.length; i++) {
+                const rel = rels[i];
+                const type = rel.getAttribute('Type') || '';
+                if (!/\/image$/.test(type)) continue;
+
+                const id = rel.getAttribute('Id');
+                const target = rel.getAttribute('Target');
+                if (!id || !target) continue;
+
+                const mediaPath = target.startsWith('/') ? target.replace(/^\/+/, '') : `word/${target}`;
+                const mediaFile = zip.file(mediaPath);
+                if (!mediaFile) continue;
+
+                try {
+                    const base64 = await mediaFile.async('base64');
+                    const ext = mediaPath.split('.').pop().toLowerCase();
+                    const mime = IMAGE_MIME_TYPES[ext] || 'application/octet-stream';
+                    map[id] = `data:${mime};base64,${base64}`;
+                } catch (e) {
+                    console.warn('Could not read embedded image', mediaPath, e);
+                }
+            }
+            return map;
+        }
+
+        // Render every image referenced within a paragraph/cell (modern DrawingML + legacy VML)
+        function docxNodeImages(node, imageMap) {
+            let out = '';
+            const blips = node.getElementsByTagNameNS(DRAWING_NS, 'blip');
+            for (let i = 0; i < blips.length; i++) {
+                const rId = blips[i].getAttributeNS(R_NS, 'embed') || blips[i].getAttributeNS(R_NS, 'link');
+                if (rId && imageMap[rId]) {
+                    out += `<img class="docx-img" src="${imageMap[rId]}" alt="Document image">`;
+                }
+            }
+            const imagedata = node.getElementsByTagNameNS(VML_NS, 'imagedata');
+            for (let i = 0; i < imagedata.length; i++) {
+                const rId = imagedata[i].getAttributeNS(R_NS, 'id');
+                if (rId && imageMap[rId]) {
+                    out += `<img class="docx-img" src="${imageMap[rId]}" alt="Document image">`;
+                }
+            }
+            return out;
+        }
+
+        function escapeHtmlText(str) {
+            const div = document.createElement('div');
+            div.textContent = str;
+            return div.innerHTML;
+        }
+
+        function docxParaText(p) {
+            const texts = p.getElementsByTagNameNS(WORD_NS, 't');
+            let out = '';
+            for (let i = 0; i < texts.length; i++) {
+                out += texts[i].textContent || '';
+            }
+            return out;
+        }
+
+        function docxParaStyle(p) {
+            const pPr = p.getElementsByTagNameNS(WORD_NS, 'pPr')[0];
+            if (!pPr) return null;
+            const pStyle = pPr.getElementsByTagNameNS(WORD_NS, 'pStyle')[0];
+            if (!pStyle) return null;
+            return pStyle.getAttributeNS(WORD_NS, 'val');
+        }
+
+        function docxParaBold(p) {
+            const rPrs = p.getElementsByTagNameNS(WORD_NS, 'rPr');
+            for (let i = 0; i < rPrs.length; i++) {
+                if (rPrs[i].getElementsByTagNameNS(WORD_NS, 'b').length > 0) return true;
+            }
+            return false;
+        }
+
+        function renderDocxTable(tbl, imageMap) {
+            const trs = tbl.getElementsByTagNameNS(WORD_NS, 'tr');
+            let rowsHtml = '';
+            for (let i = 0; i < trs.length; i++) {
+                const tcs = trs[i].getElementsByTagNameNS(WORD_NS, 'tc');
+                let cellsHtml = '';
+                for (let j = 0; j < tcs.length; j++) {
+                    const ps = tcs[j].getElementsByTagNameNS(WORD_NS, 'p');
+                    const cellText = [];
+                    for (let k = 0; k < ps.length; k++) {
+                        const t = docxParaText(ps[k]).trim();
+                        if (t) cellText.push(t);
+                    }
+                    const cellImages = docxNodeImages(tcs[j], imageMap);
+                    cellsHtml += `<td class="docx-td">${escapeHtmlText(cellText.join(' '))}${cellImages}</td>`;
+                }
+                rowsHtml += `<tr>${cellsHtml}</tr>`;
+            }
+            return `<table class="docx-table">${rowsHtml}</table>`;
+        }
+
+        function parseDocxXmlToHtml(xmlString, imageMap) {
+            imageMap = imageMap || {};
+            const parser = new DOMParser();
+            const xmlDoc = parser.parseFromString(xmlString, 'application/xml');
+            const body = xmlDoc.getElementsByTagNameNS(WORD_NS, 'body')[0];
+            if (!body) return '<p class="docx-p">Unable to parse document content.</p>';
+
+            let html = '';
+            let isFirstParagraph = true;
+            for (let i = 0; i < body.children.length; i++) {
+                const child = body.children[i];
+                const localName = child.localName;
+                if (localName === 'p') {
+                    const text = docxParaText(child).trim();
+                    const imagesHtml = docxNodeImages(child, imageMap);
+                    if (!text && !imagesHtml) continue;
+
+                    if (imagesHtml) {
+                        html += `<div class="docx-image-wrap">${imagesHtml}</div>`;
+                    }
+
+                    if (text) {
+                        const style = docxParaStyle(child);
+                        const escaped = escapeHtmlText(text);
+                        const wasFirst = isFirstParagraph;
+                        isFirstParagraph = false;
+
+                        if (style && /Heading/i.test(style)) {
+                            const level = Math.min((parseInt(style.replace(/\D/g, ''), 10) || 1) + 1, 6);
+                            html += `<h${level} class="docx-heading">${escaped}</h${level}>`;
+                        } else if (style === 'Title' || (wasFirst && docxParaBold(child) && text.length < 150)) {
+                            html += `<h2 class="docx-title">${escaped}</h2>`;
+                        } else if (docxParaBold(child) && text.length < 120) {
+                            html += `<p class="docx-bold">${escaped}</p>`;
+                        } else {
+                            html += `<p class="docx-p">${escaped}</p>`;
+                        }
+                    }
+                } else if (localName === 'tbl') {
+                    html += renderDocxTable(child, imageMap);
+                }
+            }
+            return html;
+        }
+
+        // Fetch, unzip and parse a .docx file into display-ready HTML
+        async function loadDocxContent(docxUrl, datasetId) {
+            if (docxContentCache[datasetId]) {
+                return docxContentCache[datasetId];
+            }
+            try {
+                const response = await fetch(encodeURI(docxUrl));
+                const arrayBuffer = await response.arrayBuffer();
+                const zip = await JSZip.loadAsync(arrayBuffer);
+                const xmlFile = zip.file('word/document.xml');
+                if (!xmlFile) return null;
+                const xmlString = await xmlFile.async('string');
+                const imageMap = await buildDocxImageMap(zip);
+                const html = parseDocxXmlToHtml(xmlString, imageMap);
+                docxContentCache[datasetId] = html;
+                return html;
+            } catch (error) {
+                console.error('Error loading docx content:', error);
+                return null;
+            }
+        }
+
+        // Render the Source Document card by reading straight from dataset.download.docx
+        async function renderDocumentCard(dataset) {
+            const docCard = document.getElementById('document-content-card');
+            const docInner = document.getElementById('document-content-inner');
+
+            if (!dataset.download || !dataset.download.docx) {
+                docCard.classList.add('hidden');
+                return;
+            }
+
+            docCard.classList.remove('hidden');
+            docInner.innerHTML = '<p class="docx-p text-on-surface-variant dark:text-gray-400 italic">Loading document content…</p>';
+
+            const html = await loadDocxContent(dataset.download.docx, dataset.id);
+            // Only apply if user hasn't navigated away in the meantime
+            if (window.location.hash === `#/dataset/${dataset.id}`) {
+                docInner.innerHTML = html || '<p class="docx-p text-on-surface-variant dark:text-gray-400 italic">Could not load the document preview. Use the download button instead.</p>';
+            }
+        }
+
+        // Toggle collapse/expand for Schema Definition & Sample Records sections
+        function toggleCollapse(section) {
+            const body = document.getElementById(section + '-body');
+            const chevron = document.getElementById(section + '-chevron');
+            if (!body) return;
+            const collapsed = body.classList.toggle('hidden');
+            if (chevron) {
+                chevron.textContent = collapsed ? 'expand_more' : 'expand_less';
+            }
+        }
+
         // Dynamic Router
         async function handleRoute() {
             const hash = window.location.hash || '#/';
@@ -796,6 +1088,9 @@ git push origin main</code></pre>
             document.getElementById('detail-title').textContent = dataset.name;
             document.getElementById('detail-description').textContent = dataset.description;
             document.getElementById('detail-schema-count').textContent = `${dataset.schema.length} Fields Defined`;
+
+            // Render Source Document card (parses the .docx client-side, if one is configured)
+            renderDocumentCard(dataset);
 
             // Load CSV data
             console.log('Loading CSV data from:', dataset.download.csv);
